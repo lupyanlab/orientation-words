@@ -4,8 +4,9 @@ from UserList import UserList
 
 import unipath
 import pandas
+from numpy import random
 
-from labtools.trials_functions import expand
+from labtools.trials_functions import expand, extend, add_block, smart_shuffle
 
 
 class Participant(UserDict):
@@ -56,6 +57,7 @@ class Participant(UserDict):
 
 
 class Trials(UserList):
+    STIM_DIR = 'stimuli'
     COLUMNS = [
         # Trial columns
         'block',
@@ -64,6 +66,7 @@ class Trials(UserList):
 
         # Stimuli columns
         'cue',
+        'cue_file',
         'cue_type',
         'mask_type',
         'response_type',
@@ -78,23 +81,67 @@ class Trials(UserList):
     ]
 
     @classmethod
-    def make(cls):
+    def make(cls, **kwargs):
+        seed = kwargs.get('seed')
+        prng = random.RandomState(seed)
+
         # Balance within subject variables
         trials = pandas.DataFrame({'mask_type': ['nomask', 'mask']})
         trials = expand(trials, name='cue_type', values=['valid', 'invalid'],
-                        ratio=0.75)
+                        ratio=0.75, seed=seed)
         trials = expand(trials, name='response_type', values=['pic', 'word'],
-                        ratio=0.75)
+                        ratio=0.75, seed=seed)
 
-        # Add picture
-        trials['cue'] = ''
-        trials['target'] = ''
-        trials['target_loc'] = ''
-        trials['correct_response'] = ''
+        # Set length of experiment
+        trials = extend(trials, max_length = 320)
+
+        # Determine target category on every trial
+        categories_csv = unipath.Path(cls.STIM_DIR, 'categories.csv')
+        categories = pandas.read_csv(categories_csv).category
+        trials['target'] = prng.choice(categories, len(trials), replace=True)
+        trials['target_loc'] = prng.choice(['left', 'right'], len(trials),
+                                           replace=True)
+
+        def pick_cue(trial):
+            if trial['cue_type'] == 'valid':
+                return trial['target']
+            else:
+                distractors = list(categories)
+                distractors.remove(trial['target'])
+                return prng.choice(distractors)
+
+        trials['cue'] = trials.apply(pick_cue, axis=1)
+
+        # cue_file is determined at run time
+        trials['cue_file'] = ''
+
+        response_map = dict(valid='match', invalid='mismatch')
+        def pick_correct_response(trial):
+            if trial['response_type'] == 'pic':
+                return trial['target_loc']
+            else:
+                return response_map[trial['cue_type']]
+
+        trials['correct_response'] = trials.apply(pick_correct_response, axis=1)
 
         # Add block
-        trials['block'] = ''
-        trials['block_type'] = ''
+        trials = add_block(trials, size=60, start=0, seed=seed)
+        trials['block_type'] = 'test'
+
+        # Add practice trials
+        num_practice = 12
+        practice_ix = prng.choice(trials.index, num_practice)
+        practice_trials = trials.ix[practice_ix, ]
+        trials.drop(practice_ix, inplace=True)
+
+        practice_trials['block_type'] = 'practice'
+        practice_trials['block'] = -1
+        trials = pandas.concat([practice_trials, trials])
+
+        # Shuffle
+        trials = smart_shuffle(trials, col='target', block='block', seed=seed)
+
+        # Enumerate trials
         trials['trial'] = range(len(trials))
 
         # Add blank columns for response variables
@@ -105,7 +152,6 @@ class Trials(UserList):
 
     def write_trials(self, trials_csv):
         trials = pandas.DataFrame.from_records(self)
-        print trials.columns
         trials = trials[self.COLUMNS]
         trials.to_csv(trials_csv, index=False)
 
