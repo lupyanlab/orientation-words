@@ -25,20 +25,22 @@ instructions:
     top: >
       Sometimes the word you hear will not match the pictures you see, but your
       task is exactly the same: determine which picture is correctly oriented.
-      On other trials instead of seeing pictures you will see a word printed
-      either on the left or on the right. On these trials, you should respond
-      whether or not the printed word is the same word that you heard through
-      the headphones. If it matches, press the up arrow. If it does not match,
-      press the down arrow. Press the SPACEBAR to see one of these trials.
+      You need to pay attention to the word you hear because on some trials
+      instead of seeing pictures you will see a word printed either on the left
+      or on the right. On these trials, you should respond whether or not the
+      printed word is the same as the word you heard through the headphones. If
+      they are the same, press the up arrow. If they are different words, press
+      the down arrow. Press the SPACEBAR to see one of these trials.
   5:
     tag: mask
     top: >
       As you perform this task, please stare at the center of the screen
       directly at the "+" and respond based on what you see with your peripheral
       vision. On some trials you will see flashing colorful patterns as shown
-      below. You will now start with some practice trials. If you have any
-      questions about the task, ask the experimenter now. When you are ready
-      to begin, press the SPACEBAR.
+      below. Keep looking at the "+" even when the patterns are flashing. You
+      will now start with some practice trials. If you have any questions about
+      the task, ask the experimenter now. When you are ready to begin, press the
+      SPACEBAR.
 practice: >
   You've completed the practice trials. Do you have any questions? If so, now
   is the time to ask the experimenter.
