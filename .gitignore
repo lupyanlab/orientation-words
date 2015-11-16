@@ -2,6 +2,7 @@ sample_trials.csv
 .DS_Store
 *.pyc
 *.pickle
+*.json
 .Rproj.user
 .Rhistory
 .RData
