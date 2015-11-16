@@ -1,13 +1,25 @@
 #!/usr/bin/env python
+import copy
 from UserDict import UserDict
 from UserList import UserList
 
 import unipath
 import pandas
 from numpy import random
+import yaml
+
+try:
+    import pyo
+except ImportError:
+    print 'pyo not installed!'
+from psychopy import prefs
+prefs.general['audioLib'] = ['pyo', ]
+from psychopy import sound
+
+from psychopy import visual, core, event
 
 from labtools.trials_functions import expand, extend, add_block, smart_shuffle
-
+from labtools.psychopy_helper import get_subj_info, load_sounds, load_images
 
 class Participant(UserDict):
     """ Store participant data and provide helper functions. """
@@ -66,7 +78,6 @@ class Trials(UserList):
 
         # Stimuli columns
         'cue',
-        'cue_file',
         'cue_type',
         'mask_type',
         'response_type',
@@ -111,9 +122,6 @@ class Trials(UserList):
                 return prng.choice(distractors)
 
         trials['cue'] = trials.apply(pick_cue, axis=1)
-
-        # cue_file is determined at run time
-        trials['cue_file'] = ''
 
         response_map = dict(valid='match', invalid='mismatch')
         def pick_correct_response(trial):
@@ -169,8 +177,139 @@ class Trials(UserList):
 
 
 class Experiment(object):
-    pass
+    STIM_DIR = 'stimuli'
 
+    def __init__(self, settings_yaml, texts_yaml):
+        with open(settings_yaml) as f:
+            settings = yaml.load(f)
+        self.layout = settings.pop('layout')
+        self.positions = self.layout.pop('positions')
+        self.waits = settings.pop('waits')
+        self.response_keys = settings.pop('response_keys')
+
+        with open(texts_yaml) as f:
+            self.texts = yaml.load(f)
+
+        self.win = visual.Window(fullscr=True, units='pix')
+
+        text_kwargs = dict(
+            win=self.win,
+            font='Consolas',
+            height=60,
+            color='black'
+        )
+        self.fix = visual.TextStim(text='+', **text_kwargs)
+        self.prompt = visual.TextStim(text='?', **text_kwargs)
+
+        self.frames = []
+        self.cues = load_sounds(unipath.Path(self.STIM_DIR, 'cues'))
+        self.masks = []
+
+        # Targets
+        image_kwargs = dict(
+            win=self.win,
+            size=self.layout['pic_size'],
+            # pos is set in run_trial
+        )
+        self.pics = load_images(unipath.Path(self.STIM_DIR, 'pics'),
+                                **image_kwargs)
+
+        self.word = visual.TextStim(**text_kwargs)
+
+        self.timer = core.Clock()
+
+        feedback_dir = unipath.Path(self.STIM_DIR, 'feedback')
+        self.feedback = {}
+        self.feedback[0] = sound.Sound(unipath.Path(feedback_dir, 'buzz.wav'))
+        self.feedback[1] = sound.Sound(unipath.Path(feedback_dir, 'bleep.wav'))
+
+    def run_trial(self, trial):
+        # Cue files are named "alligator-1", "alligator-2".
+        # This list contains the cue files that match the
+        # cue in the trial, e.g. "alligator"
+        cue_versions = [snd for n, snd in self.cues.items()
+                        if n.find(trial['cue']) == 0]
+        cue = random.choice(cue_versions)
+        cue_dur = cue.getDuration()
+
+        target_stims = []
+        if trial['response_type'] == 'pic':
+            base = self.pics[trial['target']]
+            assert trial['target_loc'] in ['left', 'right']
+            for pos in ['left', 'right']:
+                pic = copy.copy(base)
+                pic.setPos(self.positions[pos])
+                if trial['target_loc'] != pos:
+                    pic.setOri(180.0)
+                target_stims.append(pic)
+        elif trial['response_type'] == 'word':
+            self.word.setText(trial['target'])
+            self.word.setPos(self.positions[trial['target_loc']])
+            target_stims.append(self.word)
+        else:
+            raise NotImplementedError
+
+        soa = self.waits['cue_onset_to_target_onset']
+        cue_offset_to_target_onset = soa - cue_dur
+
+        stim_during_cue = []
+        if trial['mask_type'] == 'mask':
+            stim_during_cue.extend(self.masks)
+
+        # Begin trial presentation
+        # ------------------------
+        self.fix.autoDraw = True
+        for frame in self.frames:
+            frame.autoDraw = True
+        self.win.flip()
+        core.wait(self.waits['fixation_duration'])
+
+        self.timer.reset()
+        cue.play()
+        while self.timer.getTime() < cue_dur:
+            [stim.draw() for stim in stim_during_cue]
+            self.win.flip()
+            core.wait(0.01)
+
+        self.win.flip()
+        core.wait(cue_offset_to_target_onset)
+
+        for target in target_stims:
+            target.draw()
+        self.timer.reset()
+        self.win.flip()
+        core.wait(self.waits['target_duration'])
+
+        self.fix.autoDraw = False
+        for frame in self.frames:
+            frame.autoDraw = False
+        self.prompt.draw()
+        self.win.flip()
+        response = event.waitKeys(maxWait=self.waits['response_window'],
+                                  keyList=self.response_keys.keys(),
+                                  timeStamped=self.timer)
+        # ----------------------
+        # End trial presentation
+
+        try:
+            key, rt = response[0]
+        except TypeError:
+            rt = self.waits['response_window']
+            response = 'timeout'
+        else:
+            response = self.response_keys[key]
+
+        is_correct = int(response == trial['correct_response'])
+
+        self.feedback[is_correct].play()
+
+        core.wait(self.waits['iti'])
+
+        trial['response'] = response
+        trial['rt'] = rt * 1000
+        trial['is_correct'] = is_correct
+
+        return trial
 
 def main():
     print 'running experiment'
@@ -187,8 +326,19 @@ if __name__ == '__main__':
         trials = Trials.make()
         trials.write_trials('sample_trials.csv')
     elif args.command == 'test':
-        experiment = Experiment()
-        trial_data = experiment.run_trial()
+        trial = {key: '' for key in Trials.COLUMNS}
+
+        # Fill in required args
+        trial['cue'] = 'elephant'
+        trial['response_type'] = 'pic'
+        trial['target'] = 'elephant'
+        trial['target_loc'] = 'right'
+        trial['mask_type'] = 'mask'
+        trial['correct_response'] = 'right'
+
+        experiment = Experiment('settings.yaml', 'texts.yaml')
+        trial_data = experiment.run_trial(trial)
+
         import pprint
         pprint.pprint(trial_data)
     else:
