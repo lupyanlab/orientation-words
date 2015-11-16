@@ -255,10 +255,9 @@ class Experiment(object):
             self.word.setPos(self.positions[trial['target_loc']])
             target_stims.append(self.word)
         else:
-            raise NotImplementedError
-
-        soa = self.waits['cue_onset_to_target_onset']
-        cue_offset_to_target_onset = soa - cue_dur
+            raise NotImplementedError(
+                'bad response_type %s' % trial['response_type']
+            )
 
         stim_during_cue = []
         if trial['mask_type'] == 'mask':
@@ -272,6 +271,7 @@ class Experiment(object):
         self.win.flip()
         core.wait(self.waits['fixation_duration'])
 
+        # Play cue (and show mask)
         self.timer.reset()
         cue.play()
         while self.timer.getTime() < cue_dur:
@@ -279,15 +279,18 @@ class Experiment(object):
             self.win.flip()
             core.wait(0.01)
 
+        # Interval between cue offset and target onset
         self.win.flip()
-        core.wait(cue_offset_to_target_onset)
+        core.wait(self.waits['cue_offset_to_target_onset'])
 
+        # Show the target
         for target in target_stims:
             target.draw()
         self.timer.reset()
         self.win.flip()
         core.wait(self.waits['target_duration'])
 
+        # Collect response
         self.fix.autoDraw = False
         for frame in self.frames:
             frame.autoDraw = False
@@ -310,13 +313,20 @@ class Experiment(object):
 
         is_correct = int(response == trial['correct_response'])
 
-        if trial['block_type'] == 'practice':
+        if not is_correct:
+            used_wrong_keys = (trial['response_type'] == 'pic' and response in ['match', 'mismatch']) or \
+                              (trial['response_type'] == 'word' and response in ['left', 'right'])
+
+        if trial['block_type'] == 'practice' or used_wrong_keys:
             self.feedback[is_correct].play()
 
-		if response == 'timeout':
-			self.show_screen('timeout')
+        if used_wrong_keys:
+            self.show_screen('wrong_keys')
 
-        core.wait(self.waits['iti'])
+        if response == 'timeout':
+            self.show_screen('timeout')
+
+        core.wait(self.waits['iti'] - rt)
 
         trial['response'] = response
         trial['rt'] = rt * 1000
@@ -496,6 +506,7 @@ if __name__ == '__main__':
                         nargs='?', default='main')
 
     default_trial_options = dict(
+        block_type='practice',
         cue='elephant',
         response_type='pic',
         target='elephant',

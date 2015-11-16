@@ -53,6 +53,20 @@ break: >
 timeout: >
   You ran out of time! Take a quick break if you need to. When you are ready to
   continue, press the SPACEBAR.
+wrong_keys: >
+  You used the wrong keys to respond. As a reminder:
+
+
+  If you see pictures, use the left or right arrow to indicate which picture is
+  upright.
+
+
+  If you see a word, respond with the up arrow if the word is the same as the
+  one you heard, or press the down arrow if it's a different word (regardless of
+  which side it's on).
+
+
+  Press the SPACEBAR to resume the experiment.
 end: >
   You have finished the experiment. All that's left is a short survey. After
   you exit this screen by pressing the SPACEBAR, a survey should open in your
