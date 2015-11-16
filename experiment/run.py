@@ -124,7 +124,7 @@ class Trials(UserList):
 
         trials['cue'] = trials.apply(pick_cue, axis=1)
 
-        response_map = dict(valid='match', invalid='mismatch')
+        response_map = dict(valid='same', invalid='different')
         def pick_correct_response(trial):
             if trial['response_type'] == 'pic':
                 return trial['target_loc']
@@ -315,7 +315,7 @@ class Experiment(object):
         is_correct = int(response == trial['correct_response'])
 
         if not is_correct:
-            used_wrong_keys = (trial['response_type'] == 'pic' and response in ['match', 'mismatch']) or \
+            used_wrong_keys = (trial['response_type'] == 'pic' and response in ['same', 'different']) or \
                               (trial['response_type'] == 'word' and response in ['left', 'right'])
 
         if trial['block_type'] == 'practice' or used_wrong_keys:
