@@ -187,6 +187,7 @@ class Experiment(object):
         self.positions = self.layout.pop('positions')
         self.waits = settings.pop('waits')
         self.response_keys = settings.pop('response_keys')
+        self.survey_url = settings.pop('survey_url')
 
         with open(texts_yaml) as f:
             self.texts = yaml.load(f)
