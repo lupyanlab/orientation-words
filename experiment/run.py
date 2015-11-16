@@ -343,12 +343,30 @@ def main():
 
     participant = Participant(**participant_data)
     trials = Trials.make(**participant)
+
     experiment = Experiment()
+    experiment.show_screen('instructions')
+
+    participant.write_header(trials.COLUMNS)
+
+    for block in trials.iter_blocks():
+        block_type = block[0]['block_type']
+
+        for trial in block:
+            trial_data = experiment.run_trial(trial)
+            participant.write_trial(trial_data)
+
+        experiment.show_screen(block_type)
+
+    experiment.show_screen('end')
+    import webbrowser
+    webbrowser.open(experiment.survey_url.format(subj_id='TEST_SUBJ', computer='TEST_COMPUTER'))
+
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('command', choices=['main', 'trials', 'test'],
+    parser.add_argument('command', choices=['main', 'maketrials', 'single'],
                         nargs='?', default='main')
 
     default_trial_options = dict(
@@ -365,10 +383,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    if args.command == 'trials':
+    if args.command == 'maketrials':
         trials = Trials.make()
         trials.write_trials('sample_trials.csv')
-    elif args.command == 'test':
+    elif args.command == 'single':
         trial = dict(default_trial_options)
         for name in default_trial_options:
             if hasattr(args, name):
@@ -379,5 +397,9 @@ if __name__ == '__main__':
 
         import pprint
         pprint.pprint(trial_data)
+    elif args.command == 'survey':
+        experiment = Experiment()
+        import webbrowser
+        webbrowser.open(experiment.survey_url.format(subj_id='TEST_SUBJ', computer='TEST_COMPUTER'))
     else:
         main()
