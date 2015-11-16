@@ -31,8 +31,17 @@ recode_mask_type <- function(frame) {
 recode_response_type <- function(frame) {
   response_type_map <- dplyr::data_frame(
     response_type = c("pic", "word"),
-    response_label = c("Upright picture", "Verify word")
+    response_label = c("Upright picture", "Verify word"),
+    response_c = c(-0.5, 0.5)
   )
   try(frame <- dplyr::left_join(frame, response_type_map))
   frame
+}
+
+add_sig_stars <- function(frame) {
+  frame %>% mutate(
+    sig = ifelse(p.value > 0.05, "",
+                 ifelse(p.value > 0.01, "*",
+                        ifelse(p.value > 0.001, "**",
+                               "***"))))
 }
