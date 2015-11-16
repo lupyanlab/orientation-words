@@ -243,24 +243,13 @@ class Experiment(object):
         self.feedback[1] = sound.Sound(unipath.Path(feedback_dir, 'bleep.wav'))
 
     def run_trial(self, trial):
-        # Cue files are named "alligator-1", "alligator-2".
-        # This list contains the cue files that match the
-        # cue in the trial, e.g. "alligator"
-        cue_versions = [snd for n, snd in self.cues.items()
-                        if n.find(trial['cue']) == 0]
-        cue = random.choice(cue_versions)
+        cue = self._select_cue(trial['cue'])
         cue_dur = cue.getDuration()
 
         target_stims = []
         if trial['response_type'] == 'pic':
-            base = self.pics[trial['target']]
-            assert trial['target_loc'] in ['left', 'right']
-            for pos in ['left', 'right']:
-                pic = copy.copy(base)
-                pic.setPos(self.positions[pos])
-                if trial['target_loc'] != pos:
-                    pic.setOri(180.0)
-                target_stims.append(pic)
+            pics = self._make_pics(trial['target'], trial['target_loc'])
+            target_stims.extend(pics)
         elif trial['response_type'] == 'word':
             self.word.setText(trial['target'])
             self.word.setPos(self.positions[trial['target_loc']])
@@ -353,13 +342,72 @@ class Experiment(object):
 
         main = visual.TextStim(**self.screen_text_kwargs)
 
+        paragraph_kwargs = dict(self.screen_text_kwargs)
+        paragraph_kwargs['height'] = 20
+        top = visual.TextStim(pos=(0, 280), **paragraph_kwargs)
+
         for i, info in instructions:
+            advance_keys = ['space', 'q']
+
             if 'main' in info:
                 main.setText(info['main'])
                 main.draw()
 
+            if 'top' in info:
+                top.setText(info['top'])
+                top.draw()
+
+            tag = info.pop('tag', None)
+            if tag == 'donkey':
+                self.fix.draw()
+                for pic in self._make_pics(tag, 'right', size=(300, 300)):
+                    pic.draw()
+                advance_keys = ['right', 'q']
+            elif tag == 'cue':
+                self.win.flip()
+                event.waitKeys(keyList=['space', ])
+
+                top.draw()
+                cue = self._select_cue('elephant')
+                cue_dur = cue.getDuration()
+                cue.play()
+                self.fix.draw()
+                self.win.flip()
+                core.wait(cue_dur)
+
+                top.draw()
+                self.fix.draw()
+                for pic in self._make_pics('elephant', 'left', size=(300, 300)):
+                    pic.draw()
+                advance_keys = ['left', 'q']
+            elif tag == 'word':
+                self.win.flip()
+                event.waitKeys(keyList=['space', ])
+
+                top.draw()
+                cue = self._select_cue('chair')
+                cue_dur = cue.getDuration()
+                cue.play()
+                self.fix.draw()
+                self.win.flip()
+                core.wait(cue_dur)
+
+                top.draw()
+                self.fix.draw()
+                self.word.setText('chair')
+                self.word.setPos(self.positions['right'])
+                self.word.draw()
+                advance_keys = ['up', 'q']
+            elif tag == 'mask':
+                self.fix.draw()
+                for mask in self.masks:
+                    mask.draw()
+
             self.win.flip()
-            response = event.waitKeys(keyList=['space', 'q'])[0]
+            response = event.waitKeys(keyList=advance_keys)[0]
+
+            if response in ['left', 'right', 'up', 'down']:
+                self.feedback[1].play()
 
             if response == 'q':
                 core.quit()
@@ -371,10 +419,37 @@ class Experiment(object):
                 win=self.win,
                 font='Consolas',
                 color='black',
-                height=30
+                height=30,
+                wrapWidth=800,
             )
         return self._screen_text_kwargs
 
+    def _make_pics(self, target, target_loc, size=None):
+        pics = []
+
+        base = self.pics[target]
+        assert target_loc in ['left', 'right']
+        for pos in ['left', 'right']:
+            pic = copy.copy(base)
+            pic.setPos(self.positions[pos])
+
+            if size:
+                pic.setSize(size)
+
+            if target_loc != pos:
+                pic.setOri(180.0)
+
+            pics.append(pic)
+
+        return pics
+
+    def _select_cue(self, name):
+        # Cue files are named "alligator-1", "alligator-2".
+        # This list contains the cue files that match the
+        # cue in the trial, e.g. "alligator"
+        cue_versions = [snd for n, snd in self.cues.items()
+                        if n.find(name) == 0]
+        return random.choice(cue_versions)
 
 def main():
     participant_data = get_subj_info(

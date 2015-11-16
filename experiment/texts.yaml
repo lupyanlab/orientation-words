@@ -1,13 +1,49 @@
 instructions:
   1:
     main: >
-      First page of the instructions.
+      Welcome to the MWP Experiment! Press the SPACEBAR to begin.
   2:
-    main: >
-      Second page of the instructions.
+    tag: donkey
+    top: >
+      Today your job is to identify which picture (left or right) is oriented
+      correctly in the normal, upright position. For example, you might see the
+      two pictures below. They are exactly the same image, except that one of
+      them is flipped 180 degrees so that it is upside down, and the other is
+      not flipped. Your job is to pick the one that is *not flipped*, and press
+      the key for that picture. If the upright picture is on the left, you will
+      press the left arrow. If it's on the right, press the right arrow. Press
+      the correct key for the images below to continue.
+  3:
+    tag: cue
+    top: >
+      Before you see the pictures, you will hear a word through the headphones.
+      Please put the headphones on now. Press the SPACEBAR to hear a word,
+      and then you will see two new pictures. Respond to the pictures
+      using the arrow keys.
+  4:
+    tag: word
+    top: >
+      Sometimes the word you hear will not match the pictures you see, but your
+      task is exactly the same: determine which picture is correctly oriented.
+      On other trials instead of seeing pictures you will see a word printed
+      either on the left or on the right. On these trials, you should respond
+      whether or not the printed word is the same word that you heard through
+      the headphones. If it matches, press the up arrow. If it does not match,
+      press the down arrow. Press the SPACEBAR to see one of these trials.
+  5:
+    tag: mask
+    top: >
+      As you perform this task, please stare at the center of the screen
+      directly at the "+" and respond based on what you see with your peripheral
+      vision. On some trials you will see flashing colorful patterns as shown
+      below. You will now start with some practice trials. If you have any
+      questions about the task, ask the experimenter now. When you are ready
+      to begin, press the SPACEBAR.
 practice: >
   You've reached the end of practice.
 break: >
   Take a break.
+timeout: >
+  You missed one!
 end: >
   You're done.
