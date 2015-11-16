@@ -525,7 +525,7 @@ if __name__ == '__main__':
     if args.command == 'maketrials':
         trials = Trials.make()
         trials.write_trials('sample_trials.csv')
-    elif args.command == 'single':
+    elif args.command == 'singletrial':
         trial = dict(default_trial_options)
         for name in default_trial_options:
             if hasattr(args, name):
