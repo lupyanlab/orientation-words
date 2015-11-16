@@ -1,4 +1,5 @@
 sample_trials.csv
+*.swp
 .DS_Store
 *.pyc
 *.pickle
