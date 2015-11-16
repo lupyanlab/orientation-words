@@ -1,0 +1,52 @@
+---
+title: "Predicted results"
+author: "Pierce Edmiston"
+date: "November 16, 2015"
+output:
+  html_document:
+    theme: flatly
+---
+
+We're expecting to find an effect of the mask in the upright picture task
+but not the verify word task.
+
+```{r, echo = FALSE, message = FALSE}
+library(dplyr)
+library(ggplot2)
+library(devtools)
+
+load_all("orientationwords")
+
+orientation <- expand.grid(
+    cue_type = c("valid", "invalid"),
+    mask_type = c("mask", "nomask"),
+    response_type = c("pic", "word"),
+    stringsAsFactors = FALSE
+  ) %>%
+  mutate(
+    base_rt = 400,
+    response_effect = ifelse(response_type == "pic", 0, 200),
+    cue_effect = ifelse(cue_type == "valid", -40, 40)
+  )
+
+pic <- orientation$response_type == "pic"
+mask <- orientation$mask_type == "mask"
+
+orientation$mask_effect <- 0
+orientation[pic & mask & orientation$cue_type == "valid", "mask_effect"] <- 30
+orientation[pic & mask & orientation$cue_type == "invalid", "mask_effect"] <- -30
+
+orientation <- orientation %>%
+  mutate(rt = base_rt + response_effect + cue_effect + mask_effect) %>%
+  select(cue_type, mask_type, response_type, rt) %>%
+  recode
+
+ggplot(orientation, aes(x = mask_c, y = rt, color = cue_type)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap("response_label") +
+  scale_x_mask +
+  scale_y_rt +
+  scale_color_cue_type +
+  base_theme
+```

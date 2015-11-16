@@ -1,0 +1,15 @@
+scale_x_mask <- ggplot2::scale_x_continuous("", breaks = c(-0.5, 0.5),
+                                            labels = c("No mask", "Mask"))
+
+scale_y_rt <- ggplot2::scale_y_continuous("Reaction Time")
+
+cue_colors <- list(invalid = "#d7191c", valid = "#a6d96a")
+scale_color_cue_type <- ggplot2::scale_color_manual("",
+                                                    labels = c("Invalid", "Valid"),
+                                                    values = unlist(cue_colors))
+
+base_theme <- ggplot2::theme_minimal() +
+  theme(
+    axis.ticks = element_blank(),
+    panel.margin = grid::unit(2, "lines")
+  )
