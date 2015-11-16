@@ -231,8 +231,12 @@ class Experiment(object):
             size=pic_size,
             # pos is set in run_trial
         )
-        self.pics = load_images(unipath.Path(self.STIM_DIR, 'pics'),
-                                **image_kwargs)
+        self.left_pics = load_images(unipath.Path(self.STIM_DIR, 'pics'),
+                                     pos=self.positions['left'],
+                                     **image_kwargs)
+        self.right_pics = load_images(unipath.Path(self.STIM_DIR, 'pics'),
+                                      pos=self.positions['right'],
+                                      **image_kwargs)
 
         self.word = visual.TextStim(**text_kwargs)
 
@@ -375,7 +379,7 @@ class Experiment(object):
             tag = info.pop('tag', None)
             if tag == 'donkey':
                 self.fix.draw()
-                for pic in self._make_pics(tag, 'right', size=(300, 300)):
+                for pic in self._make_pics(tag, 'right'):
                     pic.draw()
                 advance_keys = ['right', 'q']
             elif tag == 'cue':
@@ -392,7 +396,7 @@ class Experiment(object):
 
                 top.draw()
                 self.fix.draw()
-                for pic in self._make_pics('elephant', 'left', size=(300, 300)):
+                for pic in self._make_pics('elephant', 'left'):
                     pic.draw()
                 advance_keys = ['left', 'q']
             elif tag == 'word':
@@ -439,23 +443,18 @@ class Experiment(object):
             )
         return self._screen_text_kwargs
 
-    def _make_pics(self, target, target_loc, size=None):
-        pics = []
+    def _make_pics(self, target, target_loc):
+        left = self.left_pics[target]
+        right = self.right_pics[target]
 
-        base = self.pics[target]
-        assert target_loc in ['left', 'right']
-        for pos in ['left', 'right']:
-            pic = copy.copy(base)
-            pic.setPos(self.positions[pos])
+        if target_loc == 'left':
+            left.setOri(0)
+            right.setOri(180)
+        else:
+            left.setOri(180)
+            right.setOri(0)
 
-            if size:
-                pic.setSize(size)
-
-            if target_loc != pos:
-                pic.setOri(180.0)
-
-            pics.append(pic)
-
+        pics = [left, right]
         return pics
 
     def _select_cue(self, name):
