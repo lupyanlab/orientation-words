@@ -1,5 +1,10 @@
-instructions: >
-  These are the instructions.
+instructions:
+  1:
+    main: >
+      First page of the instructions.
+  2:
+    main: >
+      Second page of the instructions.
 practice: >
   You've reached the end of practice.
 break: >

@@ -151,7 +151,7 @@ class Trials(UserList):
         trials = smart_shuffle(trials, col='target', block='block', seed=seed)
 
         # Enumerate trials
-        trials['trial'] = range(len(trials))
+        trials['trial'] = range(1, len(trials)+1)
 
         # Add blank columns for response variables
         for c in ['response', 'rt', 'is_correct']:
@@ -341,12 +341,6 @@ class Experiment(object):
             raise NotImplementedError('%s not a valid screen' % name)
 
     def _show_screen(self, text):
-        if not hasattr(self, 'screen_text_kwargs'):
-            self.screen_text_kwargs = dict(
-                win=self.win,
-                font='Consolas',
-                height=30,
-            )
         visual.TextStim(text=text, **self.screen_text_kwargs).draw()
         self.win.flip()
         response = event.waitKeys(keyList=['space', 'q'])[0]
@@ -355,7 +349,31 @@ class Experiment(object):
             core.quit()
 
     def _show_instructions(self):
-        self._show_screen(self.texts['instructions'])
+        instructions = sorted(self.texts['instructions'].items())
+
+        main = visual.TextStim(**self.screen_text_kwargs)
+
+        for i, info in instructions:
+            if 'main' in info:
+                main.setText(info['main'])
+                main.draw()
+
+            self.win.flip()
+            response = event.waitKeys(keyList=['space', 'q'])[0]
+
+            if response == 'q':
+                core.quit()
+
+    @property
+    def screen_text_kwargs(self):
+        if not hasattr(self, 'screen_text_kwargs'):
+            self._screen_text_kwargs = dict(
+                win=self.win,
+                font='Consolas',
+                color='black',
+                height=30
+            )
+        return self._screen_text_kwargs
 
 
 def main():
@@ -393,7 +411,8 @@ def main():
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('command', choices=['main', 'maketrials', 'single'],
+    command_choices = ['main', 'maketrials', 'single', 'instructions', 'survey']
+    parser.add_argument('command', choices=command_choices,
                         nargs='?', default='main')
 
     default_trial_options = dict(
@@ -424,6 +443,9 @@ if __name__ == '__main__':
 
         import pprint
         pprint.pprint(trial_data)
+    elif args.command == 'instructions':
+        experiment = Experiment()
+        experiment._show_instructions()
     elif args.command == 'survey':
         experiment = Experiment()
         import webbrowser
