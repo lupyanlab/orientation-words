@@ -11,10 +11,13 @@ credentials = Credentials(json_key['client_email'],
                           scope)
 gc = gspread.authorize(credentials)
 
-workbook = gc.open('MWP Subject Info')
-worksheet = workbook.worksheet('orientation-words')
-records = worksheet.get_all_records()
-subj_info = pandas.DataFrame.from_records(records)
-subj_info = subj_info[worksheet.row_values(1)]  # set column order
-subj_info.to_csv('subj_info.csv', index=False)
+def fetch_subj_info():
+    workbook = gc.open('MWP Subject Info')
+    worksheet = workbook.worksheet('orientation-words')
+    records = worksheet.get_all_records()
+    subj_info = pandas.DataFrame.from_records(records)
+    subj_info = subj_info[worksheet.row_values(1)]  # set column order
+    subj_info.to_csv('subj_info.csv', index=False)
 
+if __name__ == '__main__':
+    fetch_subj_info()
