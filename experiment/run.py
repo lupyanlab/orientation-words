@@ -539,6 +539,7 @@ if __name__ == '__main__':
     elif args.command == 'instructions':
         experiment = Experiment()
         experiment._show_instructions()
+        experiment.show_screen('test')
     elif args.command == 'survey':
         experiment = Experiment()
         import webbrowser
