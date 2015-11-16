@@ -60,7 +60,7 @@ class Participant(UserDict):
     def write_trial(self, trial):
         assert self._col_names, 'write header first to save column order'
         trial_data = dict(self)
-        trial_data.upandasate(trial)
+        trial_data.update(trial)
         row_data = [str(trial_data[key]) for key in self._col_names]
         self._write_line(self.DATA_DELIMITER.join(row_data))
 
@@ -330,6 +330,33 @@ class Experiment(object):
         trial['is_correct'] = is_correct
 
         return trial
+
+    def show_screen(self, name):
+        if name == 'instructions':
+            print 'showing instructions'
+            self._show_instructions()
+        elif name in self.texts:
+            self._show_screen(text=self.texts[name])
+        else:
+            raise NotImplementedError('%s not a valid screen' % name)
+
+    def _show_screen(self, text):
+        if not hasattr(self, 'screen_text_kwargs'):
+            self.screen_text_kwargs = dict(
+                win=self.win,
+                font='Consolas',
+                height=30,
+            )
+        visual.TextStim(text=text, **self.screen_text_kwargs).draw()
+        self.win.flip()
+        response = event.waitKeys(keyList=['space', 'q'])[0]
+
+        if response == 'q':
+            core.quit()
+
+    def _show_instructions(self):
+        self._show_screen(self.texts['instructions'])
+
 
 def main():
     participant_data = get_subj_info(
