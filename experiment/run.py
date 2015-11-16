@@ -502,7 +502,7 @@ def main():
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    command_choices = ['main', 'maketrials', 'single', 'instructions', 'survey']
+    command_choices = ['main', 'maketrials', 'singletrial', 'instructions', 'survey']
     parser.add_argument('command', choices=command_choices,
                         nargs='?', default='main')
 
@@ -517,7 +517,8 @@ if __name__ == '__main__':
     )
 
     for name, default in default_trial_options.items():
-        parser.add_argument('--%s' % name, default=default)
+        parser.add_argument('--%s' % name, default=default,
+                            help='singletrial command option, default is %s' % default)
 
     args = parser.parse_args()
 
