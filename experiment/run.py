@@ -310,7 +310,11 @@ class Experiment(object):
 
         is_correct = int(response == trial['correct_response'])
 
-        self.feedback[is_correct].play()
+        if trial['block_type'] == 'practice':
+            self.feedback[is_correct].play()
+
+		if response == 'timeout':
+			self.show_screen('timeout')
 
         core.wait(self.waits['iti'])
 
@@ -322,12 +326,11 @@ class Experiment(object):
 
     def show_screen(self, name):
         if name == 'instructions':
-            print 'showing instructions'
             self._show_instructions()
         elif name in self.texts:
             self._show_screen(text=self.texts[name])
         else:
-            raise NotImplementedError('%s not a valid screen' % name)
+            raise NotImplementedError('%s is not a valid screen' % name)
 
     def _show_screen(self, text):
         visual.TextStim(text=text, **self.screen_text_kwargs).draw()
@@ -444,9 +447,11 @@ class Experiment(object):
         return pics
 
     def _select_cue(self, name):
-        # Cue files are named "alligator-1", "alligator-2".
-        # This list contains the cue files that match the
-        # cue in the trial, e.g. "alligator"
+        """ Create a list of possible cues given a name.
+
+        There are multiple versions of each cue.
+        e.g., "alligator-1", "alligator-2"
+        """
         cue_versions = [snd for n, snd in self.cues.items()
                         if n.find(name) == 0]
         return random.choice(cue_versions)

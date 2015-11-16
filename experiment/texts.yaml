@@ -40,10 +40,23 @@ instructions:
       questions about the task, ask the experimenter now. When you are ready
       to begin, press the SPACEBAR.
 practice: >
-  You've reached the end of practice.
+  You've completed the practice trials. Do you have any questions? If so, now
+  is the time to ask the experimenter.
+
+
+  The next trials will be harder because you will not receive any feedback on
+  your performance. Please do your best to respond as quickly and accurately
+  as possible.
 break: >
-  Take a break.
+  You've finished a part of the experiment. Take a break, but please stay in
+  the room. When you are ready to continue, press the SPACEBAR.
 timeout: >
-  You missed one!
+  You ran out of time! Take a quick break if you need to. When you are ready to
+  continue, press the SPACEBAR.
 end: >
-  You're done.
+  You have finished the experiment. All that's left is a short survey. After
+  you exit this screen by pressing the SPACEBAR, a survey should open in your
+  browser window.
+
+
+  Thank you for making our research possible!
