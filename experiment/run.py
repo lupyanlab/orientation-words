@@ -314,6 +314,7 @@ class Experiment(object):
 
         is_correct = int(response == trial['correct_response'])
 
+        used_wrong_keys = False
         if not is_correct:
             used_wrong_keys = (trial['response_type'] == 'pic' and response in ['same', 'different']) or \
                               (trial['response_type'] == 'word' and response in ['left', 'right'])
