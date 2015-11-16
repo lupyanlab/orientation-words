@@ -9,7 +9,7 @@ scale_color_cue_type <- ggplot2::scale_color_manual("",
                                                     values = unlist(cue_colors))
 
 base_theme <- ggplot2::theme_minimal() +
-  theme(
-    axis.ticks = element_blank(),
+  ggplot2::theme(
+    axis.ticks = ggplot2::element_blank(),
     panel.margin = grid::unit(2, "lines")
   )
