@@ -18,6 +18,7 @@ from psychopy import sound
 
 from psychopy import visual, core, event
 
+from labtools import DynamicMask
 from labtools.trials_functions import expand, extend, add_block, smart_shuffle
 from labtools.psychopy_helper import get_subj_info, load_sounds, load_images
 
@@ -179,7 +180,7 @@ class Trials(UserList):
 class Experiment(object):
     STIM_DIR = 'stimuli'
 
-    def __init__(self, settings_yaml, texts_yaml):
+    def __init__(self, settings_yaml='settings.yaml', texts_yaml='texts.yaml'):
         with open(settings_yaml) as f:
             settings = yaml.load(f)
         self.layout = settings.pop('layout')
@@ -201,14 +202,32 @@ class Experiment(object):
         self.fix = visual.TextStim(text='+', **text_kwargs)
         self.prompt = visual.TextStim(text='?', **text_kwargs)
 
-        self.frames = []
+        pic_size = self.layout['pic_size']
+        frame_kwargs = dict(
+            win=self.win,
+            lineColor='black',
+            lineWidth=2.0,
+            fillColor=None,
+            width=pic_size[0] + 10,
+            height=pic_size[0] + 10,
+        )
+        self.frames = [visual.Rect(pos=pos, **frame_kwargs)
+                       for pos in self.positions.values()]
+
         self.cues = load_sounds(unipath.Path(self.STIM_DIR, 'cues'))
-        self.masks = []
+
+
+        mask_kwargs = dict(
+            win=self.win,
+            size=pic_size,
+        )
+        self.masks = [DynamicMask(pos=pos, **mask_kwargs)
+                      for pos in self.positions.values()]
 
         # Targets
         image_kwargs = dict(
             win=self.win,
-            size=self.layout['pic_size'],
+            size=pic_size,
             # pos is set in run_trial
         )
         self.pics = load_images(unipath.Path(self.STIM_DIR, 'pics'),
@@ -288,6 +307,7 @@ class Experiment(object):
         response = event.waitKeys(maxWait=self.waits['response_window'],
                                   keyList=self.response_keys.keys(),
                                   timeStamped=self.timer)
+        self.win.flip()
         # ----------------------
         # End trial presentation
 
@@ -312,7 +332,18 @@ class Experiment(object):
         return trial
 
 def main():
-    print 'running experiment'
+    participant_data = get_subj_info(
+        'gui.yaml',
+        # check_exists is a simple function to determine if the data file
+        # exists, provided subj_info data. Here it's used to check for
+        # uniqueness in subj_ids when getting info from gui.
+        check_exists=lambda subj_info:
+            Participant(**subj_info).data_file.exists()
+    )
+
+    participant = Participant(**participant_data)
+    trials = Trials.make(**participant)
+    experiment = Experiment()
 
 if __name__ == '__main__':
     import argparse
@@ -320,23 +351,30 @@ if __name__ == '__main__':
     parser.add_argument('command', choices=['main', 'trials', 'test'],
                         nargs='?', default='main')
 
+    default_trial_options = dict(
+        cue='elephant',
+        response_type='pic',
+        target='elephant',
+        target_loc='left',
+        mask_type='mask',
+        correct_response='left',
+    )
+
+    for name, default in default_trial_options.items():
+        parser.add_argument('--%s' % name, default=default)
+
     args = parser.parse_args()
 
     if args.command == 'trials':
         trials = Trials.make()
         trials.write_trials('sample_trials.csv')
     elif args.command == 'test':
-        trial = {key: '' for key in Trials.COLUMNS}
+        trial = dict(default_trial_options)
+        for name in default_trial_options:
+            if hasattr(args, name):
+                trial[name] = getattr(args, name)
 
-        # Fill in required args
-        trial['cue'] = 'elephant'
-        trial['response_type'] = 'pic'
-        trial['target'] = 'elephant'
-        trial['target_loc'] = 'right'
-        trial['mask_type'] = 'mask'
-        trial['correct_response'] = 'right'
-
-        experiment = Experiment('settings.yaml', 'texts.yaml')
+        experiment = Experiment()
         trial_data = experiment.run_trial(trial)
 
         import pprint
