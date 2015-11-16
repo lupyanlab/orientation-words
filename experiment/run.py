@@ -191,7 +191,7 @@ class Experiment(object):
         with open(texts_yaml) as f:
             self.texts = yaml.load(f)
 
-        self.win = visual.Window(fullscr=True, units='pix')
+        self.win = visual.Window(fullscr=True, allowGUI=False, units='pix')
 
         text_kwargs = dict(
             win=self.win,
