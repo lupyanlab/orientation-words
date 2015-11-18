@@ -15,6 +15,4 @@ waits:
 response_keys:
   left: left
   right: right
-  up: same
-  down: different
 survey_url: 'https://docs.google.com/forms/d/1XvbWLeTm6SuyM4dr1CpkRXO6V-YT2KwGTtFN-dWFyU8/viewform?entry.910726511={subj_id}&entry.125044269={computer}&entry.969548156&entry.969586956&entry.1239227527&entry.1711268051&entry.23393786'

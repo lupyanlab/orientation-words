@@ -244,7 +244,10 @@ class Experiment(object):
                                       pos=self.positions['right'],
                                       **image_kwargs)
 
-        self.word = visual.TextStim(**text_kwargs)
+        self.left_word = visual.TextStim(pos=self.positions['left'],
+                                         **text_kwargs)
+        self.right_word = visual.TextStim(pos=self.positions['right'],
+                                          **text_kwargs)
 
         self.timer = core.Clock()
 
@@ -262,9 +265,17 @@ class Experiment(object):
             pics = self._make_pics(trial['target'], trial['target_loc'])
             target_stims.extend(pics)
         elif trial['response_type'] == 'word':
-            self.word.setText(trial['target'])
-            self.word.setPos(self.positions[trial['target_loc']])
-            target_stims.append(self.word)
+            if trial['target_loc'] == 'left':
+                self.left_word.setText(trial['target'])
+                self.right_word.setText(trial['distractor'])
+            elif trial['target_loc'] == 'right':
+                self.right_word.setText(trial['target'])
+                self.left_word.setText(trial['distractor'])
+            else:
+                raise NotImplementedError(
+                    'bad target_loc %s' % trial['target_loc']
+                )
+            target_stims.extend([self.left_word, self.right_word])
         else:
             raise NotImplementedError(
                 'bad response_type %s' % trial['response_type']
@@ -322,18 +333,10 @@ class Experiment(object):
         else:
             response = self.response_keys[key]
 
-        is_correct = int(response == trial['correct_response'])
+        is_correct = int(response == trial['target_loc'])
 
-        used_wrong_keys = False
-        if not is_correct:
-            used_wrong_keys = (trial['response_type'] == 'pic' and response in ['same', 'different']) or \
-                              (trial['response_type'] == 'word' and response in ['left', 'right'])
-
-        if trial['block_type'] == 'practice' or used_wrong_keys:
+        if trial['block_type'] == 'practice':
             self.feedback[is_correct].play()
-
-        if used_wrong_keys:
-            self.show_screen('wrong_keys')
 
         if response == 'timeout':
             self.show_screen('timeout')
@@ -515,11 +518,11 @@ if __name__ == '__main__':
     default_trial_options = dict(
         block_type='practice',
         cue='elephant',
-        response_type='pic',
+        response_type='word',
         target='elephant',
+        distractor='dog',
         target_loc='left',
         mask_type='mask',
-        correct_response='left',
     )
 
     for name, default in default_trial_options.items():
