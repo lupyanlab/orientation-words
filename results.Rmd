@@ -1,11 +1,11 @@
-----
+---
 title: "Orientation Words Results"
 author: "Pierce Edmiston"
 date: "`r Sys.Date()`"
 output:
   html_document:
     theme: flatly
-----
+---
 
 ```{r, echo = FALSE, message = FALSE}
 library(knitr)
