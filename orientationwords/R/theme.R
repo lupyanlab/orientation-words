@@ -2,6 +2,7 @@ scale_x_mask <- ggplot2::scale_x_continuous("", breaks = c(-0.5, 0.5),
                                             labels = c("No mask", "Mask"))
 
 scale_y_rt <- ggplot2::scale_y_continuous("Reaction Time")
+scale_y_error <- ggplot2::scale_y_continuous("Error Rate", labels = scales::percent)
 
 cue_colors <- list(invalid = "#d7191c", valid = "#a6d96a")
 scale_color_cue_type <- ggplot2::scale_color_manual("",

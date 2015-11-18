@@ -17,6 +17,7 @@ opts_chunk$set(
 )
 
 library(dplyr)
+library(tidyr)
 library(lme4)
 library(broom)
 library(ggplot2)
@@ -27,10 +28,24 @@ orientationwords <- compile("experiment/data/") %>%
   clean %>% recode
 
 read_chunk("models/overall.R")
+read_chunk("models/errors.R")
 ```
 
 ```{r, overall-mod, echo = 1}
 ```
 
 ```{r, overall-plot}
+```
+
+# Errors
+
+```{r, error-mod, echo = 1}
+```
+
+```{r, error-plot}
+```
+
+# Types of errors
+
+```{r, error-type-plot}
 ```
