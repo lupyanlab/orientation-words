@@ -83,8 +83,8 @@ class Trials(UserList):
         'mask_type',
         'response_type',
         'target',
+        'distractor',
         'target_loc',
-        'correct_response',
 
         # Response columns
         'response',
@@ -103,6 +103,7 @@ class Trials(UserList):
                         ratio=0.75, seed=seed)
         trials = expand(trials, name='response_type', values=['pic', 'word'],
                         ratio=0.75, seed=seed)
+        trials.loc[trials.response_type == 'word', 'cue_type'] = ''
 
         # Set length of experiment
         trials = extend(trials, max_length = 320)
@@ -115,23 +116,28 @@ class Trials(UserList):
                                            replace=True)
 
         def pick_cue(trial):
-            if trial['cue_type'] == 'valid':
+            # On word trials, the cue is always the same as the target
+            if trial['response_type'] == 'word':
                 return trial['target']
+            # On valid cue pic trials, the cue is the same as the target
+            elif trial['cue_type'] == 'valid':
+                return trial['target']
+            # On invalid cue pic trials, the cue is anything but the target
             else:
                 distractors = list(categories)
                 distractors.remove(trial['target'])
                 return prng.choice(distractors)
-
         trials['cue'] = trials.apply(pick_cue, axis=1)
 
-        response_map = dict(valid='same', invalid='different')
-        def pick_correct_response(trial):
+        # For word trials, select a distractor word that isn't the target
+        def pick_distractor(trial):
             if trial['response_type'] == 'pic':
-                return trial['target_loc']
+                return ''
             else:
-                return response_map[trial['cue_type']]
-
-        trials['correct_response'] = trials.apply(pick_correct_response, axis=1)
+                distractors = list(categories)
+                distractors.remove(trial['target'])
+                return prng.choice(distractors)
+        trials['distractor'] = trials.apply(pick_distractor, axis=1)
 
         # Add block
         trials = add_block(trials, size=60, start=0, seed=seed)
@@ -238,7 +244,10 @@ class Experiment(object):
                                       pos=self.positions['right'],
                                       **image_kwargs)
 
-        self.word = visual.TextStim(**text_kwargs)
+        self.left_word = visual.TextStim(pos=self.positions['left'],
+                                         **text_kwargs)
+        self.right_word = visual.TextStim(pos=self.positions['right'],
+                                          **text_kwargs)
 
         self.timer = core.Clock()
 
@@ -256,9 +265,17 @@ class Experiment(object):
             pics = self._make_pics(trial['target'], trial['target_loc'])
             target_stims.extend(pics)
         elif trial['response_type'] == 'word':
-            self.word.setText(trial['target'])
-            self.word.setPos(self.positions[trial['target_loc']])
-            target_stims.append(self.word)
+            if trial['target_loc'] == 'left':
+                self.left_word.setText(trial['target'])
+                self.right_word.setText(trial['distractor'])
+            elif trial['target_loc'] == 'right':
+                self.right_word.setText(trial['target'])
+                self.left_word.setText(trial['distractor'])
+            else:
+                raise NotImplementedError(
+                    'bad target_loc %s' % trial['target_loc']
+                )
+            target_stims.extend([self.left_word, self.right_word])
         else:
             raise NotImplementedError(
                 'bad response_type %s' % trial['response_type']
@@ -316,18 +333,10 @@ class Experiment(object):
         else:
             response = self.response_keys[key]
 
-        is_correct = int(response == trial['correct_response'])
+        is_correct = int(response == trial['target_loc'])
 
-        used_wrong_keys = False
-        if not is_correct:
-            used_wrong_keys = (trial['response_type'] == 'pic' and response in ['same', 'different']) or \
-                              (trial['response_type'] == 'word' and response in ['left', 'right'])
-
-        if trial['block_type'] == 'practice' or used_wrong_keys:
+        if trial['block_type'] == 'practice':
             self.feedback[is_correct].play()
-
-        if used_wrong_keys:
-            self.show_screen('wrong_keys')
 
         if response == 'timeout':
             self.show_screen('timeout')
@@ -413,10 +422,11 @@ class Experiment(object):
 
                 top.draw()
                 self.fix.draw()
-                self.word.setText('chair')
-                self.word.setPos(self.positions['right'])
-                self.word.draw()
-                advance_keys = ['up', 'q']
+                self.left_word.setText('chair')
+                self.right_word.setText('donkey')
+                self.left_word.draw()
+                self.right_word.draw()
+                advance_keys = ['left', 'q']
             elif tag == 'mask':
                 self.fix.draw()
                 for mask in self.masks:
@@ -509,11 +519,11 @@ if __name__ == '__main__':
     default_trial_options = dict(
         block_type='practice',
         cue='elephant',
-        response_type='pic',
+        response_type='word',
         target='elephant',
+        distractor='dog',
         target_loc='left',
         mask_type='mask',
-        correct_response='left',
     )
 
     for name, default in default_trial_options.items():
