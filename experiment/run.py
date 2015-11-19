@@ -155,7 +155,7 @@ class Trials(UserList):
 
         practice_trials['block_type'] = 'practice'
         practice_trials['block'] = -1
-        trials = pandas.concat([practice_trials, trials])
+        trials = pandas.concat([practice_trials, trials], ignore_index=True)
 
         # Shuffle
         trials = smart_shuffle(trials, col='target', block='block', seed=seed)
@@ -236,11 +236,10 @@ class Experiment(object):
                       for pos in self.positions.values()]
 
         # Targets
-        image_kwargs = dict(
-            win=self.win,
-            size=pic_size,
-            # pos is set in run_trial
-        )
+        # NOTE: Probably inefficient to load images twice, but
+        # I was having problems trying to copy the image
+        # to each location.
+        image_kwargs = dict(win=self.win, size=pic_size)
         self.left_pics = load_images(unipath.Path(self.STIM_DIR, 'pics'),
                                      pos=self.positions['left'],
                                      **image_kwargs)
@@ -248,6 +247,7 @@ class Experiment(object):
                                       pos=self.positions['right'],
                                       **image_kwargs)
 
+        # Duplication for analogy with pics only
         self.left_word = visual.TextStim(pos=self.positions['left'],
                                          **text_kwargs)
         self.right_word = visual.TextStim(pos=self.positions['right'],
