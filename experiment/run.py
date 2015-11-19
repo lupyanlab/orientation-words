@@ -19,7 +19,8 @@ from psychopy import sound
 from psychopy import visual, core, event
 
 from labtools import DynamicMask
-from labtools.trials_functions import expand, extend, add_block, smart_shuffle
+from labtools.trials_functions import (expand, extend, add_block, smart_shuffle,
+                                       simple_shuffle)
 from labtools.psychopy_helper import get_subj_info, load_sounds, load_images
 
 class Participant(UserDict):
@@ -157,7 +158,7 @@ class Trials(UserList):
         practice_trials['block'] = -1
         trials = pandas.concat([practice_trials, trials], ignore_index=True)
 
-        # Shuffle
+        Shuffle
         try:
             trials = smart_shuffle(trials, col='target', block='block', seed=seed)
         except ValueError:
