@@ -95,6 +95,10 @@ class Trials(UserList):
     @classmethod
     def make(cls, **kwargs):
         seed = kwargs.get('seed')
+        try:
+            seed = int(seed)
+        except TypeError, ValueError:
+            seed = None
         prng = random.RandomState(seed)
 
         # Balance within subject variables

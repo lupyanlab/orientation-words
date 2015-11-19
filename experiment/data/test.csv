@@ -1,0 +1,15 @@
+subj_id,seed,date,computer,block,block_type,trial,cue,cue_type,mask_type,response_type,target,distractor,target_loc,response,rt,is_correct
+test,114,2015_Nov_19_0951,PierceiMac.local,-1,practice,1,strawberry,valid,nomask,pic,strawberry,,right,right,583.62197876,1
+test,114,2015_Nov_19_0951,PierceiMac.local,-1,practice,2,camel,valid,nomask,pic,camel,,left,left,522.112846375,1
+test,114,2015_Nov_19_0951,PierceiMac.local,-1,practice,3,alligator,valid,mask,pic,alligator,,left,right,500.863790512,0
+test,114,2015_Nov_19_0951,PierceiMac.local,-1,practice,4,strawberry,valid,nomask,pic,strawberry,,right,right,750.689029694,1
+test,114,2015_Nov_19_0951,PierceiMac.local,-1,practice,5,penguin,,mask,word,penguin,giraffe,right,right,672.332048416,1
+test,114,2015_Nov_19_0951,PierceiMac.local,-1,practice,6,kangaroo,,nomask,word,kangaroo,penguin,left,left,515.22898674,1
+test,114,2015_Nov_19_0951,PierceiMac.local,-1,practice,7,grasshopper,,nomask,word,grasshopper,zebra,left,left,544.258117676,1
+test,114,2015_Nov_19_0951,PierceiMac.local,-1,practice,8,camel,invalid,nomask,pic,deer,,left,left,707.545042038,1
+test,114,2015_Nov_19_0951,PierceiMac.local,-1,practice,9,alligator,valid,nomask,pic,alligator,,left,left,776.633024216,1
+test,114,2015_Nov_19_0951,PierceiMac.local,-1,practice,10,heart,invalid,mask,pic,tomato,,left,left,729.329109192,1
+test,114,2015_Nov_19_0951,PierceiMac.local,-1,practice,11,bee,valid,nomask,pic,bee,,right,right,640.123128891,1
+test,114,2015_Nov_19_0951,PierceiMac.local,-1,practice,12,gorilla,valid,nomask,pic,gorilla,,right,right,487.155914307,1
+test,114,2015_Nov_19_0951,PierceiMac.local,0,test,14,heart,,nomask,word,heart,kangaroo,left,left,558.13908577,1
+test,114,2015_Nov_19_0951,PierceiMac.local,0,test,15,strawberry,valid,nomask,pic,strawberry,,right,timeout,1500.0,0
