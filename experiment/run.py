@@ -381,7 +381,7 @@ class Experiment(object):
 
         paragraph_kwargs = dict(self.screen_text_kwargs)
         paragraph_kwargs['height'] = 20
-        top = visual.TextStim(pos=(0, 280), **paragraph_kwargs)
+        top = visual.TextStim(pos=(0, 300), **paragraph_kwargs)
 
         for i, info in instructions:
             advance_keys = ['space', 'q']
