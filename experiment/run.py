@@ -158,7 +158,7 @@ class Trials(UserList):
         practice_trials['block'] = -1
         trials = pandas.concat([practice_trials, trials], ignore_index=True)
 
-        Shuffle
+        # Shuffle
         try:
             trials = smart_shuffle(trials, col='target', block='block', seed=seed)
         except ValueError:
