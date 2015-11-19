@@ -515,7 +515,7 @@ def main():
 
     experiment.show_screen('end')
     import webbrowser
-    webbrowser.open(experiment.survey_url.format(subj_id='TEST_SUBJ', computer='TEST_COMPUTER'))
+    webbrowser.open(experiment.survey_url.format(**participant)
 
 
 if __name__ == '__main__':
