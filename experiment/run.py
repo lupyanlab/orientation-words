@@ -154,7 +154,11 @@ class Trials(UserList):
         trials = pandas.concat([practice_trials, trials])
 
         # Shuffle
-        trials = smart_shuffle(trials, col='target', block='block', seed=seed)
+        try:
+            trials = smart_shuffle(trials, col='target', block='block', seed=seed)
+        except ValueError:
+            print 'there was a problem shuffling the trials'
+            trials = simple_shuffle(trials, block='block', seed=seed)
 
         # Enumerate trials
         trials['trial'] = range(1, len(trials)+1)
@@ -530,10 +534,13 @@ if __name__ == '__main__':
         parser.add_argument('--%s' % name, default=default,
                             help='singletrial command option, default is %s' % default)
 
+    parser.add_argument('--seed', default=101,
+                        help='maketrials command option')
+
     args = parser.parse_args()
 
     if args.command == 'maketrials':
-        trials = Trials.make()
+        trials = Trials.make(seed=args.seed)
         trials.write_trials('sample_trials.csv')
     elif args.command == 'singletrial':
         trial = dict(default_trial_options)
