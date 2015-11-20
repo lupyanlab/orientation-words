@@ -1,6 +1,7 @@
 library(lme4)
 library(broom)
 library(ggplot2)
+library(dplyr)
 library(devtools)
 load_all("orientationwords")
 
@@ -21,6 +22,8 @@ tidy(word_mod, effects = "fixed")
 ggplot(orientation, aes(x = mask_c, y = rt, color = cue_task)) +
   geom_point(stat = "summary", fun.y = "mean") +
   geom_line(aes(group = cue_task), stat = "summary", fun.y = "mean") +
+  facet_wrap("response_label") +
   scale_x_mask +
   scale_y_rt +
-  scale_color_cue_task
+  scale_color_cue_task +
+  base_theme

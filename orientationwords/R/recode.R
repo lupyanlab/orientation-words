@@ -13,9 +13,9 @@ recode <- function(frame) {
 
 recode_cue_type <- function(frame) {
   cue_type_map <- dplyr::data_frame(
-    cue_type = c("invalid", "valid", ""),
-    cue_c = c(-0.5, 0.5, NA),
-    cue_task = c("invalid", "valid", "word")
+    cue_type = c("invalid", "valid", "", NA),
+    cue_c = c(-0.5, 0.5, NA, NA),
+    cue_task = c("invalid", "valid", "word", "word")
   )
   try(frame <- dplyr::left_join(frame, cue_type_map))
   frame
