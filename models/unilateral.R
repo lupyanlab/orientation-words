@@ -5,18 +5,15 @@ library(ggplot2)
 
 library(devtools)
 load_all("orientationwords")
+data(unilateral)
 
-orientationwords <- compile("experiment/data/") %>%
-  clean %>%
-  recode
-
-# ---- overall-mod
+# ---- unilateral-mod
 overall <- lmer(rt ~ cue_c * mask_c * response_c + (1|subj_id),
-                data = orientationwords)
+                data = unilateral)
 tidy(overall, effects = "fixed")
 
-# ---- overall-plot
-ggplot(orientationwords, aes(x = mask_c, y = rt, color = cue_type)) +
+# ---- unilateral-plot
+ggplot(unilateral, aes(x = mask_c, y = rt, color = cue_type)) +
   geom_point(stat = "summary", fun.y = "mean") +
   geom_line(stat = "summary", fun.y = "mean") +
   facet_wrap("response_label") +

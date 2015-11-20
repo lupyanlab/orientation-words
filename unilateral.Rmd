@@ -7,13 +7,15 @@ output:
     theme: flatly
 ---
 
+## Unilateral Presentation
+
 ```{r, echo = FALSE, message = FALSE}
 library(knitr)
 opts_chunk$set(
   echo = FALSE,
   message = FALSE,
   warning = FALSE,
-  fig.path = 'results-figs/'
+  fig.path = 'unilateral-figs/'
 )
 
 library(dplyr)
@@ -22,15 +24,13 @@ library(broom)
 library(ggplot2)
 
 devtools::load_all("orientationwords")
+data(unilateral)
 
-orientationwords <- compile("experiment/data/") %>%
-  clean %>% recode
-
-read_chunk("models/overall.R")
+read_chunk("models/unilateral.R")
 ```
 
-```{r, overall-mod, echo = 1}
+```{r, unilateral-mod, echo = 1}
 ```
 
-```{r, overall-plot}
+```{r, unilateral-plot}
 ```
