@@ -13,8 +13,9 @@ recode <- function(frame) {
 
 recode_cue_type <- function(frame) {
   cue_type_map <- dplyr::data_frame(
-    cue_type = c("invalid", "valid"),
-    cue_c = c(-0.5, 0.5)
+    cue_type = c("invalid", "valid", ""),
+    cue_c = c(-0.5, 0.5, NA),
+    cue_task = c("invalid", "valid", "word")
   )
   try(frame <- dplyr::left_join(frame, cue_type_map))
   frame
@@ -45,13 +46,13 @@ recode_error_type <- function(frame) {
     correct_response = c("left", "right", "same", "different"),
     stringsAsFactors = FALSE
   )
-  
+
   error_type_map$error_type <- with(error_type_map,
         ifelse(response == correct_response, NA,
                ifelse((response %in% c("left", "right") & correct_response %in% c("same", "different")) |
                       (response %in% c("same", "different") & correct_response %in% c("left", "right")),
                       "wrong_type", "wrong_key")))
-  
+
   try(frame <- dplyr::left_join(frame, error_type_map))
   frame
 }

@@ -9,6 +9,11 @@ scale_color_cue_type <- ggplot2::scale_color_manual("",
                                                     labels = c("Invalid", "Valid"),
                                                     values = unlist(cue_colors))
 
+cue_task_colors <- c(cue_colors, list(word = "gray"))
+scale_color_cue_task <- ggplot2::scale_color_manual("",
+                                                    labels = c("Invalid", "Valid", "Word Repetition"),
+                                                    values = unlist(cue_task_colors))
+
 base_theme <- ggplot2::theme_minimal() +
   ggplot2::theme(
     axis.ticks = ggplot2::element_blank(),
