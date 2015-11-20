@@ -19,7 +19,8 @@ from psychopy import sound
 from psychopy import visual, core, event
 
 from labtools import DynamicMask
-from labtools.trials_functions import expand, extend, add_block, smart_shuffle
+from labtools.trials_functions import (expand, extend, add_block, smart_shuffle,
+                                       simple_shuffle)
 from labtools.psychopy_helper import get_subj_info, load_sounds, load_images
 
 class Participant(UserDict):
@@ -95,6 +96,10 @@ class Trials(UserList):
     @classmethod
     def make(cls, **kwargs):
         seed = kwargs.get('seed')
+        try:
+            seed = int(seed)
+        except TypeError, ValueError:
+            seed = None
         prng = random.RandomState(seed)
 
         # Balance within subject variables
@@ -151,10 +156,14 @@ class Trials(UserList):
 
         practice_trials['block_type'] = 'practice'
         practice_trials['block'] = -1
-        trials = pandas.concat([practice_trials, trials])
+        trials = pandas.concat([practice_trials, trials], ignore_index=True)
 
         # Shuffle
-        trials = smart_shuffle(trials, col='target', block='block', seed=seed)
+        try:
+            trials = smart_shuffle(trials, col='target', block='block', seed=seed)
+        except ValueError:
+            print 'there was a problem shuffling the trials'
+            trials = simple_shuffle(trials, block='block', seed=seed)
 
         # Enumerate trials
         trials['trial'] = range(1, len(trials)+1)
@@ -232,11 +241,10 @@ class Experiment(object):
                       for pos in self.positions.values()]
 
         # Targets
-        image_kwargs = dict(
-            win=self.win,
-            size=pic_size,
-            # pos is set in run_trial
-        )
+        # NOTE: Probably inefficient to load images twice, but
+        # I was having problems trying to copy the image
+        # to each location.
+        image_kwargs = dict(win=self.win, size=pic_size)
         self.left_pics = load_images(unipath.Path(self.STIM_DIR, 'pics'),
                                      pos=self.positions['left'],
                                      **image_kwargs)
@@ -244,6 +252,7 @@ class Experiment(object):
                                       pos=self.positions['right'],
                                       **image_kwargs)
 
+        # Duplication for analogy with pics only
         self.left_word = visual.TextStim(pos=self.positions['left'],
                                          **text_kwargs)
         self.right_word = visual.TextStim(pos=self.positions['right'],
@@ -372,7 +381,7 @@ class Experiment(object):
 
         paragraph_kwargs = dict(self.screen_text_kwargs)
         paragraph_kwargs['height'] = 20
-        top = visual.TextStim(pos=(0, 280), **paragraph_kwargs)
+        top = visual.TextStim(pos=(0, 300), **paragraph_kwargs)
 
         for i, info in instructions:
             advance_keys = ['space', 'q']
@@ -506,7 +515,7 @@ def main():
 
     experiment.show_screen('end')
     import webbrowser
-    webbrowser.open(experiment.survey_url.format(subj_id='TEST_SUBJ', computer='TEST_COMPUTER'))
+    webbrowser.open(experiment.survey_url.format(**participant))
 
 
 if __name__ == '__main__':
@@ -530,10 +539,13 @@ if __name__ == '__main__':
         parser.add_argument('--%s' % name, default=default,
                             help='singletrial command option, default is %s' % default)
 
+    parser.add_argument('--seed', default=101,
+                        help='maketrials command option')
+
     args = parser.parse_args()
 
     if args.command == 'maketrials':
-        trials = Trials.make()
+        trials = Trials.make(seed=args.seed)
         trials.write_trials('sample_trials.csv')
     elif args.command == 'singletrial':
         trial = dict(default_trial_options)
