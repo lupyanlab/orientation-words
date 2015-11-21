@@ -6,19 +6,16 @@ library(ggplot2)
 
 library(devtools)
 load_all("orientationwords")
-
-orientationwords <- compile("experiment/data/") %>%
-  clean %>%
-  recode
+data(unilateral)
 
 # ---- error-mod
 overall_error <- glmer(is_error ~ cue_c * mask_c * response_c + (1|subj_id),
-                       data = orientationwords,
+                       data = unilateral,
                        family = binomial)
 tidy(overall_error, effects = "fixed")
 
 # ---- error-plot
-ggplot(orientationwords, aes(x = mask_c, y = is_error, color = cue_type)) +
+ggplot(unilateral, aes(x = mask_c, y = is_error, color = cue_type)) +
   geom_point(stat = "summary", fun.y = "mean") +
   geom_line(stat = "summary", fun.y = "mean") +
   facet_wrap("response_label") +
@@ -28,7 +25,7 @@ ggplot(orientationwords, aes(x = mask_c, y = is_error, color = cue_type)) +
   base_theme
 
 # ---- error-type-plot
-error_types <- orientationwords %>%
+error_types <- unilateral %>%
   group_by(response_type) %>%
   summarize(
     wrong_type = sum(error_type == "wrong_type", na.rm = TRUE)/n(),
