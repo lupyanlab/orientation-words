@@ -38,7 +38,7 @@ word_error_mod <- glmer(is_error ~ mask_c + (1|subj_id),
 tidy(word_error_mod, effects = "fixed") %>%
   add_sig_stars
 
-# ---- overall-plot
+# ---- rt-plot
 ggplot(orientation, aes(x = mask_c, y = rt, color = cue_task)) +
   geom_point(stat = "summary", fun.y = "mean") +
   geom_line(aes(group = cue_task), stat = "summary", fun.y = "mean") +
