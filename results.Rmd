@@ -35,7 +35,7 @@ read_chunk("models/overall.R")
 
 ## Reaction times
 
-```{r, overall-plot}
+```{r, rt-plot}
 ```
 
 ## Error rates
