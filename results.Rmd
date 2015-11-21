@@ -26,16 +26,51 @@ library(ggplot2)
 load_all("orientationwords")
 
 orientation <- compile("experiment/data/") %>%
-  clean %>% recode
+  clean %>% recode %>% drop
 
 read_chunk("models/overall.R")
 ```
 
+# Overall results
+
+## Reaction times
+
+```{r, overall-plot}
+```
+
+## Error rates
+
+```{r, error-plot}
+```
+
+# Orientation discrimination (replication)
+
+## Cueing effect in reaction times
+
+The cueing effect is *larger* on the masked trials.
+
 ```{r, cueing-effect-mod, echo = 1}
 ```
+
+## Cueing effect in error rates
+
+Looking at the error rates, the story makes more sense. 
+The mask increases error rates on the valid cue trials and
+decreases error rates on the invalid cue trials.
+
+```{r, cueing-effect-errors-mod, echo = 1}
+```
+
+# Word repetition task
+
+The mask does not have an impact on any aspect of the word repetition task.
+
+## Reaction times
 
 ```{r, word-mod, echo = 1}
 ```
 
-```{r, overall-plot}
+## Error rates
+
+```{r, word-errors-mod, echo = 1}
 ```
