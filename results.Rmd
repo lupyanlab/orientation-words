@@ -26,7 +26,7 @@ library(ggplot2)
 load_all("orientationwords")
 
 orientation <- compile("experiment/data/") %>%
-  clean %>% recode %>% drop
+  clean %>% recode# %>% drop
 
 read_chunk("models/overall.R")
 ```
