@@ -62,6 +62,13 @@ subj_z <- subj_z %>%
 
 orientation <- orientation %>% left_join(subj_z)
 
+# ---- correlation
+cor_vars <- c("rt_z", "error_z", "tradeoff", "tradeoff_abs", "estimate")
+cor(subjs_tradeoff[, cor_vars]) %>%
+  fix_data_frame %>%
+  select(term, cue_x_mask = estimate) %>%
+  filter(term != "estimate")
+  
 # ---- tradeoff-mod
 tradeoff_mod <- lmer(rt ~ (cue_c * mask_c) * tradeoff_abs + (1|subj_id),
                      data = orientation)

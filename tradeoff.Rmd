@@ -30,6 +30,11 @@ read_chunk("tradeoff.R")
 ```{r, tradeoff-calc, echo = TRUE}
 ```
 
+# Correlation
+
+```{r, correlation}
+```
+
 # Predict cue x mask interaction from speed-accuracy tradeoff
 
 ```{r, tradeoff-mod, echo = 1}
