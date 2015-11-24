@@ -84,7 +84,6 @@ class Trials(UserList):
         'mask_type',
         'response_type',
         'target',
-        'distractor',
         'target_loc',
 
         # Response columns
@@ -108,7 +107,6 @@ class Trials(UserList):
                         ratio=0.75, seed=seed)
         trials = expand(trials, name='response_type', values=['pic', 'word'],
                         ratio=0.75, seed=seed)
-        trials.loc[trials.response_type == 'word', 'cue_type'] = ''
 
         # Set length of experiment
         trials = extend(trials, max_length = 320)
@@ -121,28 +119,17 @@ class Trials(UserList):
                                            replace=True)
 
         def pick_cue(trial):
-            # On word trials, the cue is always the same as the target
-            if trial['response_type'] == 'word':
+            # On valid cue trials, the cue is the same as the target
+            if trial['cue_type'] == 'valid':
                 return trial['target']
-            # On valid cue pic trials, the cue is the same as the target
-            elif trial['cue_type'] == 'valid':
-                return trial['target']
-            # On invalid cue pic trials, the cue is anything but the target
-            else:
+            # On invalid cue trials, the cue is anything but the target
+            elif trial['cue_type'] == 'invalid':
                 distractors = list(categories)
                 distractors.remove(trial['target'])
                 return prng.choice(distractors)
+            else:
+                raise NotImplementedError('cue type %s' % trial['cue_type'])
         trials['cue'] = trials.apply(pick_cue, axis=1)
-
-        # For word trials, select a distractor word that isn't the target
-        def pick_distractor(trial):
-            if trial['response_type'] == 'pic':
-                return ''
-            else:
-                distractors = list(categories)
-                distractors.remove(trial['target'])
-                return prng.choice(distractors)
-        trials['distractor'] = trials.apply(pick_distractor, axis=1)
 
         # Add block
         trials = add_block(trials, size=60, start=0, seed=seed)
