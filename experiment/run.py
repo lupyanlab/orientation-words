@@ -355,7 +355,11 @@ class Experiment(object):
         self.feedback[is_correct].play()
 
         if response == 'timeout':
-            self.show_screen('timeout')
+            if len(keys_pressed) == 0:
+                self.show_screen('timeout')
+            else:
+                # they responded, they just used the wrong keys
+                self.show_screen('wrong_keys')
 
         core.wait(self.waits['iti'] - rt)
 
