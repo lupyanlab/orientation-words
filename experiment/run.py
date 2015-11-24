@@ -88,6 +88,7 @@ class Trials(UserList):
         'correct_response',
 
         # Response columns
+        'keys_pressed',
         'response',
         'rt',
         'is_correct',
@@ -201,6 +202,8 @@ class Experiment(object):
         self.positions = self.layout.pop('positions')
         self.waits = settings.pop('waits')
         self.response_keys = settings.pop('response_keys')
+        self.all_response_keys = self.response_keys['pic'].keys() +\
+                                 self.response_keys['word'].keys()
         self.survey_url = settings.pop('survey_url')
 
         with open(texts_yaml) as f:
@@ -318,20 +321,29 @@ class Experiment(object):
             frame.autoDraw = False
         self.prompt.draw()
         self.win.flip()
-        response = event.waitKeys(maxWait=self.waits['response_window'],
-                                  keyList=acceptable_keys.keys(),
-                                  timeStamped=self.timer)
+
+        # Record all key presses that occur during the response window,
+        # breaking only if a correct key was pressed
+        keys_pressed = []
+        while self.timer.getTime() < self.waits['response_window']:
+            response = event.getKeys(keyList=self.all_response_keys,
+                                     timeStamped=self.timer)
+            if response:
+                key, rt = response[0]
+                keys_pressed.append(key)
+
+                if key in acceptable_keys:
+                    response = acceptable_keys[key]
+                    break
+        else:
+            # Only executed if while condition becomes false,
+            # indicating a timeout
+            rt = self.waits['response_window']
+            response = 'timeout'
+
         self.win.flip()
         # ----------------------
         # End trial presentation
-
-        try:
-            key, rt = response[0]
-        except TypeError:
-            rt = self.waits['response_window']
-            response = 'timeout'
-        else:
-            response = acceptable_keys[key]
 
         is_correct = int(response == trial['correct_response'])
 
@@ -343,6 +355,7 @@ class Experiment(object):
 
         core.wait(self.waits['iti'] - rt)
 
+        trial['keys_pressed'] = ' '.join(keys_pressed)
         trial['response'] = response
         trial['rt'] = rt * 1000
         trial['is_correct'] = is_correct
