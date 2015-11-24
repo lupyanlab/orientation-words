@@ -1,0 +1,41 @@
+---
+title: "Cue-Mask Interaction by Speed-Accuracy Tradeoff"
+author: "Pierce Edmiston"
+output:
+  html_document:
+    theme: flatly
+---
+
+```{r, echo = FALSE}
+library(knitr)
+opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  fig.path = "tradeoff/"
+)
+read_chunk("tradeoff.R")
+```
+
+```{r, setup}
+```
+
+# Speed-accuracy tradeoff
+
+```{r, parallel}
+```
+
+# Calculation of tradeoff
+
+```{r, tradeoff-calc, echo = TRUE}
+```
+
+# Predict cue x mask interaction from speed-accuracy tradeoff
+
+```{r, tradeoff-mod, echo = 1}
+```
+
+# Plot of (cue x mask) x tradeoff
+
+```{r, tradeoff-plot}
+```
