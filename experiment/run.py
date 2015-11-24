@@ -85,6 +85,7 @@ class Trials(UserList):
         'response_type',
         'target',
         'target_loc',
+        'correct_response',
 
         # Response columns
         'response',
@@ -130,6 +131,17 @@ class Trials(UserList):
             else:
                 raise NotImplementedError('cue type %s' % trial['cue_type'])
         trials['cue'] = trials.apply(pick_cue, axis=1)
+
+        response_map = dict(valid='same', invalid='different')
+        def determine_correct_response(trial):
+            # On pic trials, the correct response is the location of the target
+            if trial['response_type'] == 'pic':
+                return trial['target_loc']
+            elif trial['response_type'] == 'word':
+                return response_map[trial['cue_type']]
+            else:
+                raise NotImplementedError('response type %s' % trial['response_type'])
+        trials['correct_response'] = trials.apply(determine_correct_response, axis=1)
 
         # Add block
         trials = add_block(trials, size=60, start=0, seed=seed)
@@ -239,11 +251,7 @@ class Experiment(object):
                                       pos=self.positions['right'],
                                       **image_kwargs)
 
-        # Duplication for analogy with pics only
-        self.left_word = visual.TextStim(pos=self.positions['left'],
-                                         **text_kwargs)
-        self.right_word = visual.TextStim(pos=self.positions['right'],
-                                          **text_kwargs)
+        self.word = visual.TextStim(**text_kwargs)
 
         self.timer = core.Clock()
 
@@ -261,17 +269,10 @@ class Experiment(object):
             pics = self._make_pics(trial['target'], trial['target_loc'])
             target_stims.extend(pics)
         elif trial['response_type'] == 'word':
-            if trial['target_loc'] == 'left':
-                self.left_word.setText(trial['target'])
-                self.right_word.setText(trial['distractor'])
-            elif trial['target_loc'] == 'right':
-                self.right_word.setText(trial['target'])
-                self.left_word.setText(trial['distractor'])
-            else:
-                raise NotImplementedError(
-                    'bad target_loc %s' % trial['target_loc']
-                )
-            target_stims.extend([self.left_word, self.right_word])
+            self.word.setText(trial['target'])
+            word_loc = trial['target_loc']
+            self.word.setPos(self.positions[word_loc])
+            target_stims.append(self.word)
         else:
             raise NotImplementedError(
                 'bad response_type %s' % trial['response_type']
@@ -280,6 +281,9 @@ class Experiment(object):
         stim_during_cue = []
         if trial['mask_type'] == 'mask':
             stim_during_cue.extend(self.masks)
+
+        # Only allow the trial to continue if they hit the correct keys
+        acceptable_keys = self.response_keys[trial['response_type']]
 
         # Begin trial presentation
         # ------------------------
@@ -315,7 +319,7 @@ class Experiment(object):
         self.prompt.draw()
         self.win.flip()
         response = event.waitKeys(maxWait=self.waits['response_window'],
-                                  keyList=self.response_keys.keys(),
+                                  keyList=acceptable_keys.keys(),
                                   timeStamped=self.timer)
         self.win.flip()
         # ----------------------
@@ -327,9 +331,9 @@ class Experiment(object):
             rt = self.waits['response_window']
             response = 'timeout'
         else:
-            response = self.response_keys[key]
+            response = acceptable_keys[key]
 
-        is_correct = int(response == trial['target_loc'])
+        is_correct = int(response == trial['correct_response'])
 
         if trial['block_type'] == 'practice':
             self.feedback[is_correct].play()
@@ -517,9 +521,9 @@ if __name__ == '__main__':
         cue='elephant',
         response_type='word',
         target='elephant',
-        distractor='dog',
         target_loc='left',
         mask_type='mask',
+        correct_response='same',
     )
 
     for name, default in default_trial_options.items():
