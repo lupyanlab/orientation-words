@@ -4,16 +4,14 @@ library(ggplot2)
 library(dplyr)
 library(devtools)
 load_all("orientationwords")
-
-orientation <- compile("experiment/data") %>%
-  clean %>% recode
+data(bilateral)
 
 # ---- cueing-effect-mod
 cueing_effect_mod <- lmer(rt ~ cue_c * mask_c + (1|subj_id),
                           # cue_c is NA on response_type == "word" trials
                           # so using all the data here is fine because
                           # lmer drops those rows implicitly
-                          data = orientation)
+                          data = bilateral)
 tidy(cueing_effect_mod, effects = "fixed")
 
 # ---- cueing-effect-errors-mod
@@ -22,24 +20,24 @@ cueing_errors_mod <- glmer(is_error ~ cue_c * mask_c + (1|subj_id),
                            # cue_c is NA on response_type == "word" trials
                            # so using all the data here is fine because
                            # glmer drops those rows implicitly
-                           data = orientation)
+                           data = bilateral)
 tidy(cueing_errors_mod, effects = "fixed") %>%
   add_sig_stars
 
 # ---- word-mod
 word_mod <- lmer(rt ~ mask_c + (1|subj_id),
-                 data = filter(orientation, response_type == "word"))
+                 data = filter(bilateral, response_type == "word"))
 tidy(word_mod, effects = "fixed")
 
 # ---- word-errors-mod
 word_error_mod <- glmer(is_error ~ mask_c + (1|subj_id),
                         family = binomial,
-                        data = filter(orientation, response_type == "word"))
+                        data = filter(bilateral, response_type == "word"))
 tidy(word_error_mod, effects = "fixed") %>%
   add_sig_stars
 
 # ---- rt-plot
-ggplot(orientation, aes(x = mask_c, y = rt, color = cue_task)) +
+ggplot(bilateral, aes(x = mask_c, y = rt, color = cue_task)) +
   geom_point(stat = "summary", fun.y = "mean") +
   geom_line(aes(group = cue_task), stat = "summary", fun.y = "mean") +
   facet_wrap("response_label") +
@@ -49,7 +47,7 @@ ggplot(orientation, aes(x = mask_c, y = rt, color = cue_task)) +
   base_theme
 
 # ---- error-plot
-ggplot(orientation, aes(x = mask_c, y = is_error, color = cue_task)) +
+ggplot(bilateral, aes(x = mask_c, y = is_error, color = cue_task)) +
   geom_point(stat = "summary", fun.y = "mean") +
   geom_line(aes(group = cue_task), stat = "summary", fun.y = "mean") +
   facet_wrap("response_label") +
