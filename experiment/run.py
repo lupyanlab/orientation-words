@@ -133,7 +133,7 @@ class Trials(UserList):
                 raise NotImplementedError('cue type %s' % trial['cue_type'])
         trials['cue'] = trials.apply(pick_cue, axis=1)
 
-        response_map = dict(valid='same', invalid='different')
+        response_map = dict(valid='up', invalid='down')
         def determine_correct_response(trial):
             # On pic trials, the correct response is the location of the target
             if trial['response_type'] == 'pic':
@@ -535,7 +535,7 @@ if __name__ == '__main__':
         target='elephant',
         target_loc='left',
         mask_type='mask',
-        correct_response='same',
+        correct_response='up',
     )
 
     for name, default in default_trial_options.items():
