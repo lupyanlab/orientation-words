@@ -43,15 +43,11 @@ subj_z_parallel <- subj_z %>%
   gather(measure, z_score, -subj_id) %>%
   recode_measure
 
-# ---- parallel
-ggplot(subj_z_parallel, aes(x = measure_x, y = z_score, color = subj_id)) +
-  geom_line(aes(group = subj_id)) +
-  geom_text(aes(label = subj_id),
-            data = filter(subj_z_parallel, measure == "rt_rank_c"),
-            hjust = 1, size = 3) +
-  scale_x_continuous("Measure", breaks = c(0, 1), labels = c("RT", "Error")) +
-  coord_cartesian(ylim = c(-3.5, 3.5), xlim = c(-1, 2)) +
-  theme(legend.position = "none")
+subj_mods <- orientation %>%
+  group_by(subj_id) %>%
+  do(rt_mod = lm(rt ~ cue_c * mask_c, data = .)) %>%
+  tidy("rt_mod") %>%
+  filter(term == "cue_c:mask_c")
 
 # ---- tradeoff-calc
 subj_z <- subj_z %>%
@@ -61,6 +57,21 @@ subj_z <- subj_z %>%
   )
 
 orientation <- orientation %>% left_join(subj_z)
+
+subjs_tradeoff <- subj_mods %>%
+  ungroup() %>%
+  left_join(subj_z) %>%
+  mutate(subj_id = factor(subj_id, levels = rt_rank_levels))
+
+# ---- parallel
+ggplot(subj_z_parallel, aes(x = measure_x, y = z_score, color = subj_id)) +
+  geom_line(aes(group = subj_id)) +
+  geom_text(aes(label = subj_id),
+            data = filter(subj_z_parallel, measure == "rt_rank_c"),
+            hjust = 1, size = 3) +
+  scale_x_continuous("Measure", breaks = c(0, 1), labels = c("RT", "Error")) +
+  coord_cartesian(ylim = c(-3.5, 3.5), xlim = c(-1, 2)) +
+  theme(legend.position = "none")
 
 # ---- correlation
 cor_vars <- c("rt_z", "error_z", "tradeoff", "tradeoff_abs", "estimate")
@@ -75,17 +86,6 @@ tradeoff_mod <- lmer(rt ~ (cue_c * mask_c) * tradeoff_abs + (1|subj_id),
 tidy(tradeoff_mod, effects = "fixed")
 
 # ---- tradeoff-plot
-subj_mods <- orientation %>%
-  group_by(subj_id) %>%
-  do(rt_mod = lm(rt ~ cue_c * mask_c, data = .)) %>%
-  tidy("rt_mod") %>%
-  filter(term == "cue_c:mask_c")
-
-subjs_tradeoff <- subj_mods %>%
-  ungroup() %>%
-  left_join(subj_z) %>%
-  mutate(subj_id = factor(subj_id, levels = rt_rank_levels))
-
 ggplot(subjs_tradeoff, aes(x = tradeoff_abs, y = estimate)) +
   geom_point(aes(color = subj_id)) +
   geom_smooth(method = "lm", se = FALSE, color = "black") +

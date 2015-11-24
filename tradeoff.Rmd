@@ -27,7 +27,7 @@ read_chunk("tradeoff.R")
 
 # Calculation of tradeoff
 
-```{r, tradeoff-calc, echo = TRUE}
+```{r, tradeoff-calc, echo = 1}
 ```
 
 # Correlation
