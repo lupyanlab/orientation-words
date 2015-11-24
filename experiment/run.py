@@ -288,6 +288,11 @@ class Experiment(object):
         # Only allow the trial to continue if they hit the correct keys
         acceptable_keys = self.response_keys[trial['response_type']]
 
+        # Clear keyboard buffer
+        # Necessary since we are using event.getKeys instead of
+        # event.waitKeys, which automatically clears the buffer.
+        event.clearEvents()
+
         # Begin trial presentation
         # ------------------------
         self.fix.autoDraw = True
@@ -347,8 +352,7 @@ class Experiment(object):
 
         is_correct = int(response == trial['correct_response'])
 
-        if trial['block_type'] == 'practice':
-            self.feedback[is_correct].play()
+        self.feedback[is_correct].play()
 
         if response == 'timeout':
             self.show_screen('timeout')
