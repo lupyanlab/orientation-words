@@ -422,11 +422,10 @@ class Experiment(object):
 
                 top.draw()
                 self.fix.draw()
-                self.left_word.setText('chair')
-                self.right_word.setText('donkey')
-                self.left_word.draw()
-                self.right_word.draw()
-                advance_keys = ['left', 'q']
+                self.word.setText('chair')
+                self.word.setPos(self.positions['left'])
+                self.word.draw()
+                advance_keys = ['up', 'q']
             elif tag == 'mask':
                 self.fix.draw()
                 for mask in self.masks:

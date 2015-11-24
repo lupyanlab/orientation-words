@@ -26,11 +26,22 @@ instructions:
       Sometimes the word you hear will not match the pictures you see, but your
       task is exactly the same: determine which picture is correctly oriented.
       You need to pay attention to the word you hear because on some trials
-      instead of seeing pictures you will see two words printed in the frames
+      instead of seeing pictures you will see a word printed in one of the frames
       instead of pictures. On these trials, you should respond which word was
-      the same as the one you heard through the headphones. Use the left and
-      right arrows. Press the SPACEBAR to see one of these trials.
+      the same as the one you heard through the headphones. If it's the same
+      word, press the *up arrow*. If it's a different word, press the *down arrow*.
+      Press the SPACEBAR to see one of these trials.
   5:
+    main: >
+      Please note that if you see a single word instead of two pictures, the
+      location of the word doesn't matter, and therefore you can't respond
+      using the left or right arrow keys. Remember to use the up and down
+      arrow keys for these trials.
+
+
+      If you accidentally press the left or right arrow keys on the word trials,
+      nothing will happen. You must press the up or down arrow keys to continue.
+  6:
     tag: mask
     top: >
       As you perform this task, please stare at the center of the screen
