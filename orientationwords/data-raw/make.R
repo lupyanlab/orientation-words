@@ -3,7 +3,16 @@ library(dplyr)
 
 load_all()
 
-unilateral <- compile("data-raw/unilateral/") %>%
-  clean %>% recode
+make_unilateral <- function(overwrite = FALSE) {
+  unilateral <- compile("data-raw/unilateral/") %>%
+    clean %>% recode
 
-use_data(unilateral)
+  use_data(unilateral, overwrite = overwrite)
+}
+
+make_bilateral <- function(overwrite = FALSE) {
+  bilateral <- compile("data-raw/bilateral/") %>%
+    clean %>% recode
+
+  use_data(bilateral, overwrite = overwrite)
+}
