@@ -1,13 +1,12 @@
 ---
-title: "Orientation Words Results"
+title: "Orientation Words Results: Unilateral Presentation"
 author: "Pierce Edmiston"
 date: "`r Sys.Date()`"
 output:
   html_document:
     theme: flatly
+    toc: true
 ---
-
-## Unilateral Presentation
 
 ```{r, echo = FALSE, message = FALSE}
 library(knitr)
@@ -18,26 +17,51 @@ opts_chunk$set(
   fig.path = 'unilateral-figs/'
 )
 
-library(dplyr)
-library(tidyr)
-library(lme4)
-library(broom)
-library(ggplot2)
-
-devtools::load_all("orientationwords")
-data(unilateral)
-
 read_chunk("models/unilateral.R")
-read_chunk("models/errors.R")
 ```
 
-```{r, unilateral-mod, echo = 1}
+```{r, setup}
 ```
 
-```{r, unilateral-plot}
+# Methods
+
+On most trials, participants hear a cue and see two images, one of which
+is upside down. Their task is to identify the correctly oriented image 
+as quickly as possible.
+
+On some trials, instead of two pictures a single word appears, presented
+unilaterally. Which side the word appears does not matter; participants
+press the up arrow if the printed word is the same as the word they heard.
+They press the down arrow if the printed word is not a repetition. These
+catch trials ensure that people are indeed listening to the auditory cues.
+
+More importantly, the effect of the mask on these word trials should be
+negligible if what the mask is doing is disrupting selectively visual
+knowledge (necessary in order to observe a cueing effect on the baseline
+trials), as opposed to in general disrupting task performance. If the mask
+does not disrupt task performance in general, it should not have a
+detrimental effect on word repetition detection.
+
+# Version 1
+
+In version 1 of the experiment, participants were allowed to respond with
+any of the four keys on each trial. Unfortunately, the prepotent response
+to respond "left" when something appears on the left was responsible for many 
+people to responding to the location of the printed word rather than
+it's identity, which required an up or down response.
+
+The analysis of RTs below includes only the correct responses, so any trial
+in which there was a wrong button press is not included.
+
+## RTs
+
+```{r, unilateral1-mod, echo = 1}
 ```
 
-# Errors
+```{r, unilateral1-plot}
+```
+
+## Errors
 
 ```{r, error-mod, echo = 1}
 ```
@@ -45,7 +69,32 @@ read_chunk("models/errors.R")
 ```{r, error-plot}
 ```
 
-# Types of errors
+### Types of errors
+
+The plot below depicts the types of errors that were made on either the
+upright picture detection trials or the word repetition detection trials.
+Far more incorrect response types (left/right on a word repetition trial, or up/down on an upright picture trial) occured on word repetition trials.
 
 ```{r, error-type-plot}
+```
+
+# Version 2
+
+In version 2, participants completed the same task, except that they were
+only allowed to respond with the up/down arrows on the word repetition trials,
+and only allowed to respond with the left/right arrows on the upright picture
+orientation trials.
+
+```{r, unilateral2-mod, echo = 1}
+```
+
+```{r, unilateral2-plot}
+```
+
+# Both versions
+
+```{r, unilateral-mod, echo = 1}
+```
+
+```{r, unilateral-plot}
 ```
