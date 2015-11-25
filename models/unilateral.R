@@ -11,14 +11,6 @@ library(devtools)
 load_all("orientationwords")
 
 data(unilateral)
-unilateral$version <- 1
-
-unilateral2 <- compile("experiment/data/", regex_key = "MOW3*") %>%
-  clean %>%
-  recode %>%
-  mutate(version = 2)
-
-unilateral <- plyr::rbind.fill(unilateral, unilateral2)
 
 # ---- subjs
 subjs <- unilateral %>%
