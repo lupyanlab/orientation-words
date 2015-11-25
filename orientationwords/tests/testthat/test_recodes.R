@@ -28,7 +28,26 @@ test_that("cue task is relabeled for unilateral word trials", {
     response_type = c("word", "word")
   ) %>% recode_cue_type
 
-  expect_equal(cue_types$cue_task, c("different", "same"))
+  expect_equal(as.character(cue_types$cue_task), c("different", "same"))
+})
+
+test_that("cue task is ordered factor", {
+
+  create_cue_types <- function(stringsAsFactors) {
+    expand.grid(
+      response_type = c("word", "pic"),
+      cue_type = c("invalid", "valid"),
+      stringsAsFactors = stringsAsFactors
+    ) %>% recode_cue_type
+  }
+
+  expected_levels <- c("invalid", "valid", "different", "same")
+
+  cue_tasks_from_strings <- create_cue_types(FALSE)$cue_task
+  cue_tasks_from_factor <- create_cue_types(TRUE)$cue_task
+
+  expect_equal(levels(cue_tasks_from_strings), expected_levels)
+  expect_equal(cue_tasks_from_strings, cue_tasks_from_factor)
 })
 
 context("Error type recodes")

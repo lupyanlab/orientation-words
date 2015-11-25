@@ -28,6 +28,9 @@ recode_cue_type <- function(frame) {
     frame[unilateral_word_trials, "cue_task"] <- ifelse(
       frame[unilateral_word_trials, "cue_type"] == "valid", "same", "different"
     )
+
+    unilateral_levels = c("invalid", "valid", "different", "same")
+    frame$cue_task <- factor(frame$cue_task, levels = unilateral_levels)
   }
 
   frame

@@ -56,13 +56,13 @@ tidy(overall_error, effects = "fixed")
 
 # ---- error-plot
 ggplot(filter(unilateral, version == 1),
-       aes(x = mask_c, y = is_error, color = cue_type)) +
+       aes(x = mask_c, y = is_error, color = cue_task)) +
   geom_point(stat = "summary", fun.y = "mean") +
   geom_line(stat = "summary", fun.y = "mean") +
   facet_wrap("response_label") +
   scale_x_mask +
   scale_y_error +
-  scale_color_cue_type +
+  scale_color_unilateral_cue_task +
   base_theme
 
 # ---- error-type-plot
