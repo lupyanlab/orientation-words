@@ -41,19 +41,52 @@ recode_response_type <- function(frame) {
 }
 
 recode_error_type <- function(frame) {
-  error_type_map <- expand.grid(
-    response = c("left", "right", "same", "different"),
-    correct_response = c("left", "right", "same", "different"),
+  all_responses <- c("left", "right", "same", "different", "up", "down")
+
+  pic_responses <- expand.grid(
+    response_type = "pic",
+    response = all_responses,
+    correct_response = c("left", "right"),
     stringsAsFactors = FALSE
+  ) %>% mutate(
+    error_type = ifelse(
+      response == correct_response, NA,
+      ifelse(!(response %in% c("left", "right")), "wrong_type", "wrong_key")
+    )
   )
 
-  error_type_map$error_type <- with(error_type_map,
-        ifelse(response == correct_response, NA,
-               ifelse((response %in% c("left", "right") & correct_response %in% c("same", "different")) |
-                      (response %in% c("same", "different") & correct_response %in% c("left", "right")),
-                      "wrong_type", "wrong_key")))
+  word_responses <- expand.grid(
+    response_type = "word",
+    response = all_responses,
+    correct_response = all_responses,
+    stringsAsFactors = FALSE
+  ) %>% mutate(
+    error_type = ifelse(
+      response == correct_response, NA,
+      ifelse(
+        # bilateral version: only wrong key errors
+        correct_response %in% c("left", "right"), "wrong_key",
+        ifelse(
+          # unilateral version: wrong key or wrong type errors
+          response %in% c("left", "right"), "wrong_type", "wrong_key"
+        )
+      )
+    )
+  )
+
+  error_type_map <- rbind(pic_responses, word_responses)
 
   try(frame <- dplyr::left_join(frame, error_type_map))
+
+  # Process keys pressed, if available
+  try({
+    # Determine if more than 1 key was pressed
+    multiple_keys <- stringr::str_split(frame$keys_pressed, " ") %>%
+      lapply(function(x) length(x) > 1) %>% unlist
+
+    frame[multiple_keys, "error_type"] <- "wrong_type"
+  })
+
   frame
 }
 
