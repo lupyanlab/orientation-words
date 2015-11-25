@@ -22,6 +22,15 @@ test_that("cue type works with empty strings", {
   expect_equal(cue_types$cue_task, c("invalid", "valid", "word", "word"))
 })
 
+test_that("cue task is relabeled for unilateral word trials", {
+  cue_types <- data_frame(
+    cue_type = c("invalid", "valid"),
+    response_type = c("word", "word")
+  ) %>% recode_cue_type
+
+  expect_equal(cue_types$cue_task, c("different", "same"))
+})
+
 context("Error type recodes")
 
 test_that("error type works", {

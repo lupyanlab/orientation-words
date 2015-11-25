@@ -18,6 +18,18 @@ recode_cue_type <- function(frame) {
     cue_task = c("invalid", "valid", "word", "word")
   )
   try(frame <- dplyr::left_join(frame, cue_type_map))
+
+  if ("response_type" %in% colnames(frame)) {
+    # Relabel invalid/valid as same/different for unilateral experiments
+    unilateral_word_trials <- with(frame,
+      (response_type == "word") & (cue_type %in% c("valid", "invalid"))
+    )
+
+    frame[unilateral_word_trials, "cue_task"] <- ifelse(
+      frame[unilateral_word_trials, "cue_type"] == "valid", "same", "different"
+    )
+  }
+
   frame
 }
 
