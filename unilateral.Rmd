@@ -42,16 +42,18 @@ trials), as opposed to in general disrupting task performance. If the mask
 does not disrupt task performance in general, it should not have a
 detrimental effect on word repetition detection.
 
+More precisely, we expect the previously demonstrated effect of the mask
+on upright picture detection to be independent of the effect of the mask
+on word repetition detection. We investigated this at the individual level:
+by looking at the correlation between the effect of the mask on the cueing
+effect in the picture detection task and the effect of the mask on word
+repetition trials.
+
 # Version 1
 
 In version 1 of the experiment, participants were allowed to respond with
-any of the four keys on each trial. Unfortunately, the prepotent response
-to respond "left" when something appears on the left was responsible for many 
-people to responding to the location of the printed word rather than
-it's identity, which required an up or down response.
-
-The analysis of RTs below includes only the correct responses, so any trial
-in which there was a wrong button press is not included.
+any of the four arrow keys on each trial. The analysis of RTs below includes 
+only the correct responses.
 
 ## RTs
 
@@ -63,8 +65,14 @@ in which there was a wrong button press is not included.
 
 ## Errors
 
+We next analyzed where people were making errors. For upright picture
+detection, we expected the mask to reduce the cueing effect to the
+extent that it was present on the nomask trials.
+
 ```{r, error-mod, echo = 1}
 ```
+
+Unfortunately, the prepotent response to respond "left" when something appears on the left was responsible for many people to responding to the location of the printed word rather than it's identity, which required an up or down response.
 
 ```{r, error-plot}
 ```
