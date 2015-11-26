@@ -28,7 +28,7 @@ test_that("cue task is relabeled for unilateral word trials", {
     response_type = c("word", "word")
   ) %>% recode_cue_type
 
-  expect_equal(as.character(cue_types$cue_task), c("different", "same"))
+  expect_equal(as.character(cue_types$cue_task), c("word", "word"))
 })
 
 test_that("cue task is ordered factor", {
@@ -41,7 +41,7 @@ test_that("cue task is ordered factor", {
     ) %>% recode_cue_type
   }
 
-  expected_levels <- c("invalid", "valid", "different", "same")
+  expected_levels <- c("invalid", "valid", "word")
 
   cue_tasks_from_strings <- create_cue_types(FALSE)$cue_task
   cue_tasks_from_factor <- create_cue_types(TRUE)$cue_task

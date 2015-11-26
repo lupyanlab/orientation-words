@@ -46,7 +46,7 @@ ggplot(filter(unilateral, version == 1),
   facet_wrap("response_label") +
   scale_x_mask +
   scale_y_rt +
-  scale_color_unilateral_cue_task +
+  scale_color_cue_task +
   base_theme +
   ggtitle("V1: Effect of mask on RTs")
 
@@ -58,7 +58,7 @@ ggplot(filter(unilateral, version == 1),
   facet_wrap("response_label") +
   scale_x_mask +
   scale_y_error +
-  scale_color_unilateral_cue_task +
+  scale_color_cue_task +
   base_theme +
   ggtitle("V1: Effect of mask on errors")
 
@@ -111,7 +111,7 @@ ggplot(filter(unilateral, version == 2),
   facet_wrap("response_label") +
   scale_x_mask +
   scale_y_rt +
-  scale_color_unilateral_cue_task +
+  scale_color_cue_task +
   base_theme +
   ggtitle("V2: Effect of mask on RTs")
 
@@ -123,7 +123,7 @@ ggplot(filter(unilateral, version == 2),
   facet_wrap("response_label") +
   scale_x_mask +
   scale_y_error +
-  scale_color_unilateral_cue_task +
+  scale_color_cue_task +
   base_theme +
   ggtitle("V2: Effect of mask on errors")
 
@@ -175,7 +175,7 @@ ggplot(unilateral, aes(x = mask_c, y = rt, color = cue_task)) +
   facet_wrap("response_label") +
   scale_x_mask +
   scale_y_rt +
-  scale_color_unilateral_cue_task +
+  scale_color_cue_task +
   base_theme +
   ggtitle("Effect of mask on RTs")
 
@@ -186,7 +186,7 @@ ggplot(unilateral, aes(x = mask_c, y = is_error, color = cue_task)) +
   facet_wrap("response_label") +
   scale_x_mask +
   scale_y_error +
-  scale_color_unilateral_cue_task +
+  scale_color_cue_task +
   base_theme +
   ggtitle("Effect of mask on errors")
 
