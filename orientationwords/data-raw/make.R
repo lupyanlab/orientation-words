@@ -7,7 +7,7 @@ make_unilateral <- function(overwrite = FALSE) {
   unilateral_dir <- "data-raw/unilateral/"
 
   make_unilateral_version <- function(version) {
-    regex_keys <- list("MOW1*", "MOW3*")
+    regex_keys <- list("MOW1", "MOW3")
     compile(unilateral_dir, regex_keys[[version]]) %>%
       clean %>% recode %>% mutate(version = version)
   }
