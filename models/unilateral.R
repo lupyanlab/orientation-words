@@ -12,22 +12,31 @@ load_all("orientationwords")
 
 data(unilateral)
 
-# Version 1
+# Version 1 --------------------------------------------------------------------
 
 # ---- v1-pic-mod
 v1_pic_mod <- lmer(rt ~ cue_c * mask_c + (1|subj_id),
                    data = filter(unilateral, version == 1, response_type == "pic"))
 tidy(v1_pic_mod, effects = "fixed")
 
+# ---- v1-pic-error-mod
+v1_pic_error_mod <- glmer(is_error ~ cue_c * mask_c + (1|subj_id),
+                          data = filter(unilateral, version == 1, response_type == "pic"),
+                          family = binomial)
+tidy(v1_pic_error_mod, effects = "fixed") %>%
+  add_sig_stars
+
 # ---- v1-word-mod
-v1_word_mod <- lmer(rt ~ mask_c + (1|subj_id),
+v1_word_mod <- lmer(rt ~ mask_c + cue_c + (1|subj_id),
                     data = filter(unilateral, version == 1, response_type == "word"))
 tidy(v1_word_mod, effects = "fixed")
 
-# ---- v1-task-mod
-v1_task_mod <- lmer(rt ~ cue_c * mask_c * response_c + (1|subj_id),
-                    data = filter(unilateral, version == 1))
-tidy(v1_task_mod, effects = "fixed")
+# ---- v1-word-error-mod
+v1_word_error_mod <- glmer(is_error ~ mask_c + cue_c + (1|subj_id),
+                           data = filter(unilateral, version == 1, response_type == "word"),
+                           family = binomial)
+tidy(v1_word_error_mod, effects = "fixed") %>%
+  add_sig_stars
 
 # ---- v1-plot
 ggplot(filter(unilateral, version == 1),
@@ -39,12 +48,6 @@ ggplot(filter(unilateral, version == 1),
   scale_y_rt +
   scale_color_unilateral_cue_task +
   base_theme
-
-# ---- v1-error-mod
-v1_error_mod <- glmer(is_error ~ cue_c * mask_c * response_c + (1|subj_id),
-                      data = filter(unilateral, version == 1),
-                      family = binomial)
-tidy(v1_error_mod, effects = "fixed")
 
 # ---- v1-error-plot
 ggplot(filter(unilateral, version == 1),
@@ -72,22 +75,31 @@ ggplot(error_types, aes(x = response_type, y = error_rate, fill = error_type, or
   scale_y_error +
   base_theme
 
-# Version 2
+# Version 2 --------------------------------------------------------------------
 
 # ---- v2-pic-mod
 v2_pic_mod <- lmer(rt ~ cue_c * mask_c + (1|subj_id),
                    data = filter(unilateral, version == 2, response_type == "pic"))
 tidy(v2_pic_mod, effects = "fixed")
 
+# ---- v2-pic-error-mod
+v2_pic_error_mod <- glmer(is_error ~ cue_c * mask_c + (1|subj_id),
+                          data = filter(unilateral, version == 2, response_type == "pic"),
+                          family = binomial)
+tidy(v2_pic_error_mod, effects = "fixed") %>%
+  add_sig_stars
+
 # ---- v2-word-mod
-v2_word_mod <- lmer(rt ~ mask_c + (1|subj_id),
+v2_word_mod <- lmer(rt ~ mask_c + cue_c + (1|subj_id),
                     data = filter(unilateral, version == 2, response_type == "word"))
 tidy(v2_word_mod, effects = "fixed")
 
-# ---- v2-task-mod
-v2_task_mod <- lmer(rt ~ cue_c * mask_c * response_c + (1|subj_id),
-                    data = filter(unilateral, version == 2))
-tidy(v2_task_mod, effects = "fixed")
+# ---- v2-word-error-mod
+v2_word_error_mod <- glmer(is_error ~ mask_c + cue_c + (1|subj_id),
+                           data = filter(unilateral, version == 2, response_type == "word"),
+                           family = binomial)
+tidy(v2_word_error_mod, effects = "fixed") %>%
+  add_sig_stars
 
 # ---- v2-plot
 ggplot(filter(unilateral, version == 2),
@@ -126,21 +138,31 @@ ggplot(error_types, aes(x = response_type, y = error_rate, fill = error_type, or
   scale_y_error +
   base_theme
 
-# Overall analyses
+# Overall ----------------------------------------------------------------------
 
 # ---- pic-mod
 pic_mod <- lmer(rt ~ cue_c * mask_c + (1|subj_id),
                 data = filter(unilateral, response_type == "pic"))
 tidy(pic_mod, effects = "fixed")
 
+# ---- pic-error-mod
+pic_error_mod <- glmer(is_error ~ cue_c * mask_c + (1|subj_id),
+                       data = filter(unilateral, response_type == "pic"),
+                       family = binomial)
+tidy(pic_error_mod, effects = "fixed") %>%
+  add_sig_stars
+
 # ---- word-mod
-word_mod <- lmer(rt ~ mask_c + (1|subj_id),
+word_mod <- lmer(rt ~ mask_c + cue_c + (1|subj_id),
                  data = filter(unilateral, response_type == "word"))
 tidy(word_mod, effects = "fixed")
 
-# ---- task-mod
-task_mod <- lmer(rt ~ cue_c * mask_c * response_c + (1|subj_id), data = unilateral)
-tidy(task_mod, effects = "fixed")
+# ---- word-error-mod
+word_error_mod <- glmer(is_error ~ mask_c + cue_c + (1|subj_id),
+                        data = filter(unilateral, response_type == "word"),
+                        family = binomial)
+tidy(word_error_mod, effects = "fixed") %>%
+  add_sig_stars
 
 # ---- overall-plot
 ggplot(unilateral, aes(x = mask_c, y = rt, color = cue_task)) +
@@ -149,6 +171,16 @@ ggplot(unilateral, aes(x = mask_c, y = rt, color = cue_task)) +
   facet_wrap("response_label") +
   scale_x_mask +
   scale_y_rt +
+  scale_color_unilateral_cue_task +
+  base_theme
+
+# ---- overall-error-plot
+ggplot(unilateral, aes(x = mask_c, y = is_error, color = cue_task)) +
+  geom_point(stat = "summary", fun.y = "mean") +
+  geom_line(stat = "summary", fun.y = "mean") +
+  facet_wrap("response_label") +
+  scale_x_mask +
+  scale_y_error +
   scale_color_unilateral_cue_task +
   base_theme
 

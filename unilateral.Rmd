@@ -55,14 +55,26 @@ In version 1 of the experiment, participants were allowed to respond with
 any of the four arrow keys on each trial. The analysis of RTs below includes 
 only the correct responses.
 
-## Effect of mask on RTs
+## Means
+
+### RTs
 
 ```{r, v1-plot}
 ```
 
+### Errors
+
+```{r, v1-error-plot}
+```
+
+## Models
+
 ### Upright picture detection
 
 ```{r, v1-pic-mod, echo = 1}
+```
+
+```{r, v1-pic-error-mod, echo = 1}
 ```
 
 ### Word repetition detection
@@ -70,21 +82,16 @@ only the correct responses.
 ```{r, v1-word-mod, echo = 1}
 ```
 
-## Effect of mask on errors
+```{r, v1-word-error-mod, echo = 1}
+```
+
+## Types of errors
 
 We next analyzed where people were making errors. For upright picture
 detection, we expected the mask to reduce the cueing effect to the
 extent that it was present on the nomask trials.
 
-```{r, v1-error-mod, echo = 1}
-```
-
 Unfortunately, the prepotent response to respond "left" when something appears on the left was responsible for many people to responding to the location of the printed word rather than it's identity, which required an up or down response.
-
-```{r, v1-error-plot}
-```
-
-## Types of errors
 
 The plot below depicts the types of errors that were made on either the
 upright picture detection trials or the word repetition detection trials.
@@ -100,14 +107,26 @@ only allowed to respond with the up/down arrows on the word repetition trials,
 and only allowed to respond with the left/right arrows on the upright picture
 orientation trials.
 
-## Effect of mask on RTs
+## Means
+
+### RTs
 
 ```{r, v2-plot}
 ```
 
+### Errors
+
+```{r, v2-error-plot}
+```
+
+## Models
+
 ### Upright picture detection
 
 ```{r, v2-pic-mod, echo = 1}
+```
+
+```{r, v2-pic-error-mod, echo = 1}
 ```
 
 ### Word repetition detection
@@ -115,19 +134,37 @@ orientation trials.
 ```{r, v2-word-mod, echo = 1}
 ```
 
-# Overall
+```{r, v2-word-error-mod, echo = 1}
+```
+
+# Overall (Version 1 and Version 2)
+
+## Means
+
+### RTs
 
 ```{r, overall-plot}
 ```
 
-## Effect of mask on RTs
+### Errors
+
+```{r, overall-error-plot}
+```
+
+## Models
 
 ### Upright picture detection
 
 ```{r, pic-mod, echo = 1}
 ```
 
+```{r, pic-error-mod, echo = 1}
+```
+
 ### Word repetition detection
 
 ```{r, word-mod, echo = 1}
+```
+
+```{r, word-error-mod, echo = 1}
 ```
