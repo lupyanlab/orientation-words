@@ -16,8 +16,9 @@ scale_color_bilateral_cue_task <- ggplot2::scale_color_manual(
   values = unlist(cue_task_colors)
 )
 
-word_task_colors <- cue_colors
-names(word_task_colors) <- c("different", "same")
+# word_task_colors <- cue_colors
+# names(word_task_colors) <- c("different", "same")
+word_task_colors <- list(different = "#66C2A5", same = "#8DA0CB")
 unilateral_cue_task_colors <- c(cue_colors, word_task_colors)
 scale_color_unilateral_cue_task <- ggplot2::scale_color_manual(
   "",
