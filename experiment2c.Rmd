@@ -1,0 +1,86 @@
+---
+title: "Experiment 2C: Orientation discrimination with word repetition"
+author: "Pierce Edmiston"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: flatly
+    toc: true
+---
+
+```{r, echo = FALSE, message = FALSE}
+library(knitr)
+opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  fig.path = 'experiment2c-figs/'
+)
+
+read_chunk("models/unilateral.R")
+```
+
+```{r, setup}
+```
+
+# Methods
+
+## Materials
+
+The same materials were used in Experiment 2C as were used in Experiments 2A-B.
+
+## Participants
+
+```{r}
+unilateral %>%
+  group_by(version) %>%
+  summarize(N = length(unique(subj_id)))
+```
+
+```{r, subjs}
+```
+
+## Procedure
+
+On most trials (75%), participants heard a cue and saw two images, one of which
+was upside down. Their task was to identify the correctly oriented image 
+as quickly as possible using the left or right arrow keys on the keyboard. In
+Experiment 2C all cues were spoken words, i.e., no white noise cues were used.
+
+On some trials (25%), instead of two pictures a single word appeared, presented
+unilaterally. Which side the word appeared did not matter; participants
+pressed the up arrow if the printed word is the same as the word they heard.
+They pressed the down arrow if the printed word is not a repetition.
+
+Participants were allowed to respond with any of the four arrow keys
+on each trial, and were reminded of the keys to use if they made
+a key type error (for example, pressing the left or right arrow
+on a word trial in which the correct response is either up or down). 
+After initial data collection (N = 14), we revised the task to disallow
+left or right responses on word repetition trials.
+
+# Results
+
+```{r, overall-plot}
+```
+
+```{r, overall-error-plot}
+```
+
+## Upright picture detection
+
+```{r, pic-mod, echo = 1}
+```
+
+```{r, pic-error-mod, echo = 1}
+```
+
+## Word repetition
+
+```{r, word-mod, echo = 1}
+```
+
+```{r, word-error-mod, echo = 1}
+```
+
+# Discussion

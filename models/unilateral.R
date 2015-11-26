@@ -191,18 +191,50 @@ ggplot(unilateral, aes(x = mask_c, y = is_error, color = cue_task)) +
   ggtitle("Effect of mask on errors")
 
 # ---- subjs
-subjs <- unilateral %>%
+z_score <- function(x) (x - mean(x))/sd(x)
+
+subj_means <- unilateral %>%
   group_by(subj_id) %>%
   summarize(
     rt = mean(rt, na.rm = TRUE),
     error = mean(is_error, na.rm = TRUE)
   ) %>%
   mutate(
-    rank_rt = rank(rt),
-    rank_error = rank(error)
+    rt = z_score(rt),
+    error = z_score(error)
   )
 
-ggplot(subjs, aes(x = rank_error, y = error)) +
+subj_ranks <- subj_means %>%
+  transmute(
+    subj_id,
+    rt = rank(rt),
+    error = rank(error, ties = "first")
+  ) %>%
+  gather(measure, rank, -subj_id)
+
+subjs <- subj_means %>%
+  gather(measure, value, -subj_id) %>%
+  left_join(subj_ranks)
+
+subjs_by_error <- subj_ranks %>%
+  filter(measure == "error") %>%
+  arrange(rank) %>%
+  .$subj_id
+
+subjs <- subjs %>%
+  mutate(
+    subj_id = factor(subj_id, levels = subjs_by_error),
+    measure = factor(measure, levels = c("error", "rt"), labels = c("Errors", "Reaction times"))
+  )
+
+ggplot(subjs, aes(x = rank, y = value, color = subj_id)) +
   geom_point() +
-  geom_text(aes(label = subj_id), hjust = -0.1, angle = 90) +
-  coord_cartesian(ylim = c(0, 0.30))
+  geom_text(aes(label = subj_id), hjust = -0.1, angle = 90, size = 4) +
+  scale_y_continuous("z-score") +
+  geom_hline(aes(yintercept = yintercept),
+             data = data_frame(yintercept = c(-2, 2)),
+             lty = 2, alpha = 0.4) +
+  facet_wrap("measure", ncol = 1) +
+  coord_cartesian(ylim = c(-4, 8)) +
+  base_theme +
+  theme(legend.position = "none")
