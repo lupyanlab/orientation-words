@@ -57,12 +57,8 @@ only the correct responses.
 
 ## Means
 
-### RTs
-
 ```{r, v1-plot}
 ```
-
-### Errors
 
 ```{r, v1-error-plot}
 ```
@@ -109,12 +105,8 @@ orientation trials.
 
 ## Means
 
-### RTs
-
 ```{r, v2-plot}
 ```
-
-### Errors
 
 ```{r, v2-error-plot}
 ```
@@ -141,12 +133,8 @@ orientation trials.
 
 ## Means
 
-### RTs
-
 ```{r, overall-plot}
 ```
-
-### Errors
 
 ```{r, overall-error-plot}
 ```
