@@ -83,4 +83,12 @@ left or right responses on word repetition trials.
 ```{r, word-error-mod, echo = 1}
 ```
 
+## Correlation between masking effects
+
+```{r, mask-correlation-plot}
+```
+
+```{r, mask-correlation-mod, echo = 1}
+```
+
 # Discussion

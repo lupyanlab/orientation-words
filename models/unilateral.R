@@ -190,6 +190,37 @@ ggplot(unilateral, aes(x = mask_c, y = is_error, color = cue_task)) +
   base_theme +
   ggtitle("Effect of mask on errors")
 
+# ---- mask-correlation-plot
+cue_mask_coefs <- unilateral %>%
+  filter(response_type == "pic") %>%
+  group_by(subj_id) %>%
+  do(rt_mod = lm(rt ~ cue_c * mask_c, data = .)) %>%
+  tidy("rt_mod") %>%
+  filter(term == "cue_c:mask_c") %>%
+  select(subj_id, cue_mask = estimate)
+
+word_mask_coefs <- unilateral %>%
+  filter(response_type == "word") %>%
+  group_by(subj_id) %>%
+  do(rt_mod = lm(rt ~ mask_c + cue_c, data = .)) %>%
+  tidy("rt_mod") %>%
+  filter(term == "mask_c") %>%
+  select(subj_id, word_mask = estimate)
+
+mask_coefs <- merge(cue_mask_coefs, word_mask_coefs)
+
+ggplot(mask_coefs, aes(x = cue_mask, y = word_mask)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_x_continuous("Effect of mask on cueing effect") +
+  scale_y_continuous("Effect of mask on word repetition") +
+  base_theme
+
+# ---- mask-correlation-mod
+mask_correlation_mod <- lm(word_mask ~ cue_mask, data = mask_coefs)
+tidy(mask_correlation_mod) %>%
+  add_sig_stars
+
 # ---- subjs
 z_score <- function(x) (x - mean(x))/sd(x)
 
