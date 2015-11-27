@@ -169,7 +169,7 @@ class Trials(UserList):
         trials['trial'] = range(1, len(trials)+1)
 
         # Add blank columns for response variables
-        for c in ['response', 'rt', 'is_correct']:
+        for c in ['keys_pressed', 'response', 'rt', 'is_correct']:
             trials[c] = ''
 
         return cls(trials.to_dict('record'))
