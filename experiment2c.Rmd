@@ -1,5 +1,5 @@
 ---
-title: "Experiment 2C: Orientation discrimination with word repetition"
+title: "Experiment 2C: Visual interference disrupts verbal cueing of visual recognition but not word repetition detection"
 author: "Pierce Edmiston"
 date: "`r Sys.Date()`"
 output:
@@ -7,6 +7,16 @@ output:
     theme: flatly
     toc: true
 ---
+
+We conducted Experiment 2C to rule out the possibility that visual interference
+disrupts task performance in general, regardless of the specificity of the
+visual interference effects. In this experiment we had participants perform
+a dual task. On some trials participants completed the same upright picture
+detection task as performed in Experiments 2A and 2B. On other trials 
+participants performed a word repetition task which does not require the
+visual knowledge. We expected visual interference to again disrupt the
+verbal cueing effect observed in Experiments 2A and 2B, but not to
+have an effect on word repetition detection.
 
 ```{r, echo = FALSE, message = FALSE}
 library(knitr)
@@ -25,11 +35,9 @@ read_chunk("models/unilateral.R")
 
 # Methods
 
-## Materials
-
-The same materials were used in Experiment 2C as were used in Experiments 2A-B.
-
 ## Participants
+
+28 participants received course credit for participating in the experiment.
 
 ```{r}
 unilateral %>%
@@ -40,24 +48,22 @@ unilateral %>%
 ```{r, subjs}
 ```
 
-## Procedure
+## Materials and Procedure
 
-On most trials (75%), participants heard a cue and saw two images, one of which
-was upside down. Their task was to identify the correctly oriented image 
-as quickly as possible using the left or right arrow keys on the keyboard. In
-Experiment 2C all cues were spoken words, i.e., no white noise cues were used.
-
-On some trials (25%), instead of two pictures a single word appeared, presented
-unilaterally. Which side the word appeared did not matter; participants
-pressed the up arrow if the printed word is the same as the word they heard.
-They pressed the down arrow if the printed word is not a repetition.
+Experiment 2C was identical to Experiment 2A except that on a subset of trials
+(25%) instead of two pictures a single word appeared, presented unilaterally. 
+Which side the word appeared did not matter; participants
+pressed the up arrow if the printed word was the same as the word they heard.
+They pressed the down arrow if the printed word was not a repetition. Of
+these word trials, 75% of the time the printed word was a repetition of
+the auditory cue.
 
 Participants were allowed to respond with any of the four arrow keys
-on each trial, and were reminded of the keys to use if they made
-a key type error (for example, pressing the left or right arrow
-on a word trial in which the correct response is either up or down). 
-After initial data collection (N = 14), we revised the task to disallow
-left or right responses on word repetition trials.
+on each trial. After initial data collection (N = 14), we revised the task
+to disallow left or right responses on word repetition trials.
+
+To allow for the additional word repetition task, we also excluded the 
+baseline, noise cues that were presented in Experiments 2A and 2B.
 
 # Results
 
@@ -67,7 +73,11 @@ left or right responses on word repetition trials.
 ```{r, overall-error-plot}
 ```
 
-## Upright picture detection
+## Effect of mask on cueing upright picture detection (replication)
+
+In a replication of Experiments 2A and 2B, we observed a cueing effect on the
+trials without any visual interfence, [stats]. Visual interference reduced
+this cueing effect by X%, [stats].
 
 ```{r, pic-mod, echo = 1}
 ```
@@ -75,7 +85,10 @@ left or right responses on word repetition trials.
 ```{r, pic-error-mod, echo = 1}
 ```
 
-## Word repetition
+## Effect of mask on word repetition
+
+Visual interference did not have a detrimental effect on the speed, [stats], or
+accuracy, [stats], at which repeated words were detected.
 
 ```{r, word-mod, echo = 1}
 ```
@@ -84,6 +97,10 @@ left or right responses on word repetition trials.
 ```
 
 ## Correlation between masking effects
+
+The additional word repetition trials required participants to learn two sets
+of response keys: left and right arrows for the upright picture detection trials,
+and up and down arrows for the word repetition trials.
 
 ```{r, mask-correlation-plot}
 ```

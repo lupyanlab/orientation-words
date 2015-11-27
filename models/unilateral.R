@@ -261,7 +261,8 @@ subjs <- subjs %>%
 ggplot(subjs, aes(x = rank, y = value, color = subj_id)) +
   geom_point() +
   geom_text(aes(label = subj_id), hjust = -0.1, angle = 90, size = 4) +
-  scale_y_continuous("z-score") +
+  scale_x_continuous("Rank", breaks = c(1, seq(5, 30, by = 5))) +
+  scale_y_continuous("z-score", breaks = -2:2) +
   geom_hline(aes(yintercept = yintercept),
              data = data_frame(yintercept = c(-2, 2)),
              lty = 2, alpha = 0.4) +
