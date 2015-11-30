@@ -8,15 +8,18 @@ output:
     toc: true
 ---
 
-We conducted Experiment 2C to rule out the possibility that visual interference
-disrupts task performance in general, regardless of the specificity of the
-visual interference effects. In this experiment we had participants perform
-a dual task. On some trials participants completed the same upright picture
-detection task as performed in Experiments 2A and 2B. On other trials 
-participants performed a word repetition task which does not require the
-visual knowledge. We expected visual interference to again disrupt the
-verbal cueing effect observed in Experiments 2A and 2B, but not to
-have an effect on word repetition detection.
+Experiment 2C was conducted to test the hypothesis that the effect of 
+visual interference in Experiments 2A and 2B was limited to a disruption
+of visual knowledge and not a disruption of auditory processing of the
+verbal cues. In this experiment, participants were played auditory cues
+with or without visual interference and afterward they either had to
+perform the upright picture detection task as in Experiments 2A and 2B
+or instead they were presented a printed word and had to verify if the
+printed word was the same as the verbal cue. We expected the effect
+of visual interference to be limited to performance on the image recognition
+task and not to have an impact on word repetition detection since on our view
+only the verbal cueing of visual recognition requires visual knowledge
+that is susceptible to visual interference.
 
 ```{r, echo = FALSE, message = FALSE}
 library(knitr)
@@ -37,7 +40,8 @@ read_chunk("models/unilateral.R")
 
 ## Participants
 
-28 participants received course credit for participating in the experiment.
+`r n_subjs` participants received course credit for participating in the 
+experiment.
 
 ```{r}
 unilateral %>%
@@ -50,7 +54,7 @@ unilateral %>%
 
 ## Materials and Procedure
 
-Experiment 2C was identical to Experiment 2A except that on a subset of trials
+Experiment 2C was similar to Experiment 2A except that on a subset of trials
 (25%) instead of two pictures a single word appeared, presented unilaterally. 
 Which side the word appeared did not matter; participants
 pressed the up arrow if the printed word was the same as the word they heard.
@@ -62,7 +66,8 @@ Participants were allowed to respond with any of the four arrow keys
 on each trial. After initial data collection (N = 14), we revised the task
 to disallow left or right responses on word repetition trials.
 
-To allow for the additional word repetition task, we also excluded the 
+To allow for the additional word repetition task which required a verbal cue
+to be played on every trial, we also excluded the 
 baseline, noise cues that were presented in Experiments 2A and 2B.
 
 # Results
@@ -73,16 +78,23 @@ baseline, noise cues that were presented in Experiments 2A and 2B.
 ```{r, overall-error-plot}
 ```
 
-## Effect of mask on cueing upright picture detection (replication)
+## Effect of visual interference on verbal cueing of image recognition
 
-In a replication of Experiments 2A and 2B, we observed a cueing effect on the
-trials without any visual interfence, [stats]. Visual interference reduced
-this cueing effect by X%, [stats].
+In a replication of Experiments 2A and 2B, we observed a cueing effect in RTs on
+the trials without any visual interfence, [stats]. Visual interference reduced
+this cueing effect by 40%, [stats]. No cueing effect in accuracies was observed
+on the trials without any visual interference, [stats].
 
-```{r, pic-mod, echo = 1}
+```{r, pic-nomask-mod, echo = 1:2}
 ```
 
-```{r, pic-error-mod, echo = 1}
+```{r, pic-mod, echo = 1:2}
+```
+
+```{r, pic-error-nomask-mod, echo = 1:2}
+```
+
+```{r, pic-error-mod, results = "hide"}
 ```
 
 ## Effect of mask on word repetition
@@ -90,17 +102,22 @@ this cueing effect by X%, [stats].
 Visual interference did not have a detrimental effect on the speed, [stats], or
 accuracy, [stats], at which repeated words were detected.
 
-```{r, word-mod, echo = 1}
+```{r, word-mod, echo = 1:2}
 ```
 
-```{r, word-error-mod, echo = 1}
+```{r, word-error-mod, echo = 1:2}
 ```
 
-## Correlation between masking effects
+## Correlation between interference effects
 
-The additional word repetition trials required participants to learn two sets
-of response keys: left and right arrows for the upright picture detection trials,
-and up and down arrows for the word repetition trials.
+If visual interference disrupted processing of the verbal cues in general
+than we might expect those individuals who were most affected by the 
+interference on the upright image recognition trials to also be affected 
+on the word repetition trials, i.e., we would expect a correlation between
+the effect of the mask in the two tasks. However, the effect of the visual
+interference on the upright image detection task was independent of its
+effect on the word repetition task, [stats], supporting the hypothesis that the
+effect of visual interference is specific to tasks requiring visual knowledge.
 
 ```{r, mask-correlation-plot}
 ```
